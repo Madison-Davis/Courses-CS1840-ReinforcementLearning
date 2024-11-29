@@ -1,0 +1,11 @@
+fuse_rl/input_Sr4Ti3O10.py
+fuse_rl/input_SrY2O4.py
+fuse_rl/input_Y2O3.py
+fuse_rl/input_Y2Ti2O7.py
+fuse_rl/input_Y2TiO5.py
+fuse_rl/setup.py
+fuse_rl/vasp.py
+fuse_rl.egg-info/PKG-INFO
+fuse_rl.egg-info/SOURCES.txt
+fuse_rl.egg-info/dependency_links.txt
+fuse_rl.egg-info/top_level.txt

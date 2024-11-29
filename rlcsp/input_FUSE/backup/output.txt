@@ -1,0 +1,140 @@
+################################################################################
+#										 #
+#			   Flexible Unit Structure Engine			 #
+#				     (FUSE +CSP)				 #
+#				     v1.04					 #
+#										 #
+################################################################################
+
+
+Input formula = Y2O3
+Maximum number of formula units = 16
+Ionic input formula
+ap calculated to be: 4.741 Angstroms
+Search routine: Basin Hopping
+
+############################ Generating Initial Population ############################
+
+I      1          2e+19	  eV/atom
+I      2          4e+18	  eV/atom
+I      3          2e+19	  eV/atom
+I      4          2e+19	  eV/atom
+I      5          1e+19	  eV/atom
+I      6          2e+19	  eV/atom
+I      7       1.25e+18	  eV/atom
+I      8       1.25e+18	  eV/atom
+I      9          2e+19	  eV/atom
+I     10          2e+19	  eV/atom
+I     11    1.42857e+18	  eV/atom
+I     12          5e+18	  eV/atom
+I     13          2e+19	  eV/atom
+I     14          2e+19	  eV/atom
+I     15    1.81818e+18	  eV/atom
+I     16    6.66667e+18	  eV/atom
+I     17    3.33333e+18	  eV/atom
+I     18    6.66667e+18	  eV/atom
+I     19          2e+19	  eV/atom
+I     20        2.5e+18	  eV/atom
+I     21          2e+19	  eV/atom
+I     22          2e+19	  eV/atom
+I     23          5e+18	  eV/atom
+I     24          2e+19	  eV/atom
+I     25          2e+19	  eV/atom
+I     26          2e+19	  eV/atom
+I     27          2e+19	  eV/atom
+I     28          2e+19	  eV/atom
+I     29          2e+19	  eV/atom
+I     30          2e+19	  eV/atom
+I     31    2.85714e+18	  eV/atom
+I     32          2e+19	  eV/atom
+I     33    2.85714e+18	  eV/atom
+I     34          4e+18	  eV/atom
+I     35          2e+19	  eV/atom
+I     36          2e+19	  eV/atom
+I     37          2e+19	  eV/atom
+I     38    3.33333e+18	  eV/atom
+I     39          2e+19	  eV/atom
+I     40          2e+19	  eV/atom
+I     41          2e+19	  eV/atom
+I     42          2e+19	  eV/atom
+I     43          1e+19	  eV/atom
+I     44    6.66667e+18	  eV/atom
+I     45    3.33333e+18	  eV/atom
+I     46          5e+18	  eV/atom
+I     47          2e+19	  eV/atom
+I     48          2e+19	  eV/atom
+I     49          2e+19	  eV/atom
+I     50          2e+19	  eV/atom
+I     51          1e+19	  eV/atom
+I     52    2.22222e+18	  eV/atom
+I     53          2e+19	  eV/atom
+I     54          2e+19	  eV/atom
+I     55          5e+18	  eV/atom
+I     56          2e+19	  eV/atom
+I     57          2e+19	  eV/atom
+I     58          2e+19	  eV/atom
+I     59          2e+19	  eV/atom
+I     60          2e+19	  eV/atom
+I     61          2e+19	  eV/atom
+I     62          1e+19	  eV/atom
+I     63    3.33333e+18	  eV/atom
+I     64          2e+19	  eV/atom
+I     65    3.33333e+18	  eV/atom
+I     66          2e+19	  eV/atom
+I     67    1.66667e+18	  eV/atom
+I     68          1e+19	  eV/atom
+I     69          2e+19	  eV/atom
+I     70          5e+18	  eV/atom
+I     71          2e+19	  eV/atom
+I     72    1.42857e+18	  eV/atom
+I     73        2.5e+18	  eV/atom
+I     74          2e+19	  eV/atom
+I     75          2e+19	  eV/atom
+I     76          1e+19	  eV/atom
+I     77          2e+19	  eV/atom
+I     78          2e+19	  eV/atom
+I     79          2e+19	  eV/atom
+I     80          2e+19	  eV/atom
+I     81          2e+19	  eV/atom
+I     82    3.33333e+18	  eV/atom
+I     83    3.33333e+18	  eV/atom
+I     84    3.33333e+18	  eV/atom
+I     85          2e+19	  eV/atom
+I     86    3.33333e+18	  eV/atom
+I     87    1.42857e+18	  eV/atom
+I     88        2.5e+18	  eV/atom
+I     89          2e+19	  eV/atom
+I     90        2.5e+18	  eV/atom
+I     91          2e+19	  eV/atom
+I     92          2e+19	  eV/atom
+I     93          2e+19	  eV/atom
+I     94          2e+19	  eV/atom
+I     95          2e+19	  eV/atom
+I     96          2e+19	  eV/atom
+I     97          1e+19	  eV/atom
+I     98          2e+19	  eV/atom
+I     99    1.81818e+18	  eV/atom
+I    100    6.66667e+18	  eV/atom
+Initial population completed
+
+Lowest energy initial structure: 7 , 1.25e+18 eV/atom
+
+################################# Basin Hopping search ##################################
+
+
+Current lowest energy structure: 0 , 1.25e+18 eV/atom
+
+BH      1     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    1  T = 0.02000
+Step 0. Time elapsed for fuse: 257.6153790950775, gulp: 0.00016808509826660156, reinforce_select: 150.17224407196045, reinforce_update: 5.245208740234375e-06
+
+BH      2     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    2  T = 0.02000
+Step 1. Time elapsed for fuse: 257.85537099838257, gulp: 0.00028133392333984375, reinforce_select: 300.2543830871582, reinforce_update: 1.0967254638671875e-05
+
+BH      3     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    3  T = 0.02000
+Step 2. Time elapsed for fuse: 258.11641550064087, gulp: 0.00038433074951171875, reinforce_select: 450.3786401748657, reinforce_update: 1.5974044799804688e-05
+
+BH      4     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    4  T = 0.02000
