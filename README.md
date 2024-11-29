@@ -1,5 +1,5 @@
 # CS1840FinalProject
-Project Links.  Start at "Project: Codebase" to learn what we need to install and how to fire up an example run.
+Project Links.  Start at "Project Codebase" to learn what we need to install and how to fire up an example run.
 <br>
 https://docs.google.com/document/d/1LfbgGxZFaajdqr7RQTxCwePTGPxQsEasQgVUUqDy2tU/edit?tab=t.0
 <br><br>
