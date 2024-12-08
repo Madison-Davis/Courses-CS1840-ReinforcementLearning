@@ -401,6 +401,11 @@ class Reinforce:
                 print('Old theta: ' + str(self.theta))
 
             diff = ''
+
+            # WHERE MY CHANGE IS (UNCOMMENT OUT """ PART AND COMMENT THIS LINE FOR RLCSP)
+            self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
+
+            """
             for i in range(len(self.theta)):
                 diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
                 diff += str(diff_action_prob) + ', '
@@ -416,7 +421,7 @@ class Reinforce:
                                   f'({reward} * {diff_action_prob} + {self.reg_params["beta"]} * {entr} ) / {pi}')
 
                         self.theta[i] += alpha * (reward * diff_action_prob + self.reg_params['beta'] * entr) / pi
-
+            """
             if self.debug:
                 print('reward: ' + str(reward))
                 print('beta: ' + str(self.reg_params['beta']))
@@ -1103,3 +1108,77 @@ class Reinforce:
                 attempts += 1
                 print(f'DB query {sql} failed in attempt {attempts} with error: {e}')
                 time.sleep(10)
+        
+    ## NEW FUNCTIONS ##
+    def KL(self, k, H, theta):
+        # see slide 23 in 11/11/24 slides on PPO
+        trajectories = []
+        expected_value = 0
+        
+        for trajectory in trajectories:
+            single_trajectory_sum = 0
+            for h in range(H+1): # 0 to H-1 is a total of H timesteps, and range is exclusive
+                state_h = trajectory[h][0]
+                action_h = trajectory[h][1]
+                #pi_term = self.action_prob(action=action_h, state=state_h)
+
+                # THIS PART I need to verify will work
+                pi_term = self.st_action_prob(action=action_h, state=state_h, theta=theta)
+                single_trajectory_sum += np.log(1 / pi_term)
+            expected_value += single_trajectory_sum
+
+        expected_value /= len(expected_value)
+        return expected_value
+
+    def PPO(self, excluded_actions, lambd=0.05, gamma=0.01):
+        
+        # set up some variables and collect a trajectory
+        theta_results = []
+        H = len(self.episode)
+        FUSE_actions = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        states = []
+        for old_state, _, _ in self.episode:
+            states.append(old_state)
+        states.append(self.episode[-1][1]) # get the last new state and add it too
+
+
+        # argmax (theta)
+        for theta in self.thetas:
+
+            # Outer Expectation
+            # E s(0), ..., s(H-1)
+            outer_expectation_result = 0
+            for state_h in states:
+
+                # sum from h=0 to H-1 (in code, from 0 to H exclusive)
+                # same state (state_h) for this entire sum
+                sum_h_to_H = 0
+                for h in range(H):
+
+                    # find all the actions to take the Inner Expectation over
+                    # for FUSE, there's 9 actions, some may be excluded
+                    actions_at_iteration_h = [a for a in FUSE_actions if a not in excluded_actions]
+                    inner_expectation_result = 0
+                    for action_h in actions_at_iteration_h:
+                        # advantage function
+                        advantage = state_h + action_h + h
+                        inner_expectation_result += advantage
+                    inner_expectation_result /= len(actions_at_iteration_h)
+                    sum_h_to_H += inner_expectation_result
+
+                outer_expectation_result += sum_h_to_H
+            outer_expectation_result /= len(states)
+
+            # regularizer: gamma * KL function
+            # here, # of k's = H = time step
+            regularizer = gamma * self.KL(H, H, theta)
+
+            # add the result to theta_results
+            theta_results.append(outer_expectation_result - regularizer)
+
+        # take the argmax of all theta_results
+        best_theta_index = np.argmax(theta_results)
+        best_theta = self.thetas[best_theta_index]
+        return best_theta
+
+
