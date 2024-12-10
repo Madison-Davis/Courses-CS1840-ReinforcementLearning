@@ -1109,7 +1109,8 @@ class Reinforce:
                 print(f'DB query {sql} failed in attempt {attempts} with error: {e}')
                 time.sleep(10)
         
-    ## NEW FUNCTIONS ##
+    # TODO
+    ## ------------  NEW FUNCTIONS ------------ ##
     def p_trajectories(self, H, theta, num_trajectories=10):
         # create the distribution from which to sample trajectories, for KL_function
         # trajectories are of length H
