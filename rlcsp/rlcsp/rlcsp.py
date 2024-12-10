@@ -1199,6 +1199,42 @@ class Reinforce:
             expectations.append(self.reward(old_state, new_state))
         # Average
         return np.mean(expectations)
+
+    def estimate_value_function(self, h, H, state_h, N=10):
+        """
+        Estimates the Value function for a given state using N sampled trajectories.
+        """
+        gamma = 0.9  # Discount factor (set to 1.0 for no discounting, or adjust as needed)
+        # Discount factor is used to place more weight on samples closer to the initial state
+
+        # Use p_trajectories to sample N trajectories and their probabilities
+        trajectories, _ = self.p_trajectories(H, self.theta, num_trajectories=N)
+
+        # Filter trajectories that start from the given state
+        relevant_trajectories = [traj[h:] for traj in trajectories if traj[0][0] == state_h]
+
+        # Compute discounted cumulative rewards for each trajectory
+        sampled_returns = []
+        for traj in relevant_trajectories:
+            cumulative_reward = 0.0
+            discount = 1.0
+
+            for step in traj:
+                state, action = step
+                if state == state_h:  # Start from the correct state
+                    reward = self.reward(state, self.states[self.states.index(state) + 1])
+                    cumulative_reward += discount * reward
+                    discount *= gamma
+
+            sampled_returns.append(cumulative_reward)
+
+        if not sampled_returns:
+            return 0.0
+
+        # Estimate the Value function as the average return across sampled trajectories
+        return np.mean(sampled_returns)
+
+
     
 
     def B1_function(self, state_h, action_h):
