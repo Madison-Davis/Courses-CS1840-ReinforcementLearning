@@ -1110,75 +1110,158 @@ class Reinforce:
                 time.sleep(10)
         
     ## NEW FUNCTIONS ##
-    def KL(self, k, H, theta):
-        # see slide 23 in 11/11/24 slides on PPO
-        trajectories = []
-        expected_value = 0
+    def p_trajectories(self, H, theta, num_trajectories=10):
+        # create the distribution from which to sample trajectories, for KL_function
+        # trajectories are of length H
+        # sample and store trajectories
+
+        all_states = []
+        # populate H entries into 'states' array from self.episode
+        for old_state, _, _ in self.episode:
+            all_states.append(old_state)
+
+        # part 1: make the trajectories
+        # part 2: make a probability distribution of each trajectory
+        trajs = []
+        trajs_prob_dist = []
         
-        for trajectory in trajectories:
-            single_trajectory_sum = 0
-            for h in range(H+1): # 0 to H-1 is a total of H timesteps, and range is exclusive
-                state_h = trajectory[h][0]
-                action_h = trajectory[h][1]
-                #pi_term = self.action_prob(action=action_h, state=state_h)
+        # step 1: for each trajectory...
+        for _ in range(num_trajectories):
+            # step 2: get initial state
+            traj = []
+            curr_state = self.states[0] 
+            traj_prob = 1 # u(s0) = 1 as we start from here
+            traj.append(curr_state)
 
-                # THIS PART I need to verify will work
-                pi_term = self.st_action_prob(action=action_h, state=state_h, theta=theta)
-                single_trajectory_sum += np.log(1 / pi_term)
-            expected_value += single_trajectory_sum
+            # for h iterations...
+            for h in range(H):
+                # step 2: determine a state
+                state_h = curr_state
 
-        expected_value /= len(expected_value)
-        return expected_value
+                # step 3: determine an action
+                weights = []
+                for action in self.actions:
+                    weights.append(self.action_prob(action, state_h))
+                action_h = int(random.choices(self.actions, weights=weights, k=1))
+                traj_prob = traj_prob * weights[action_h]
+
+                # step 4: add [state_h, action_h] to trajectory
+                iter_h = [state_h, action_h]
+                traj.append(iter_h)
+
+                # step 5: transition to next state
+                weights = []
+                for state in all_states:
+                    weights.append(self.st_action_prob(action, state, theta=theta))
+                next_state = random.choices(all_states, weights=weights, k=1)[0]
+                traj_prob = traj_prob * weights[next_state]
+                curr_state = next_state
+
+            # step 6: after completing the trajectory, add it to the list of trajectories
+            trajs.append(traj)
+            trajs_prob_dist.append(traj_prob)
+
+        return trajs, trajs_prob_dist
+
+
+    def KL_function(self, H, theta):
+        # see slide 23 in 11/11/24 slides on PPO
+        trajs, trajs_prob_dist = self.p_trajectories(self, H, theta, num_trajectories=10)
+        # in the situation where trajs_prob_dist does not sum to 1, normalize it
+        total_probability = sum(trajs_prob_dist)
+        trajs_prob_dist = [p / total_probability for p in trajs_prob_dist]
+        
+        # Expectation
+        # E t(0), ..., t(#)
+        expected_values = []
+        for traj in trajs:
+            single_traj_sum = 0
+            for h in range(H):
+                state_h = traj[h][0]
+                action_h = traj[h][1]
+                pi_term = self.action_prob(action=action_h, state=state_h)
+                single_traj_sum += np.log(1 / pi_term)
+            expected_values.append(single_traj_sum)
+        # Average
+        expectation = sum(v * p for v, p in zip(expected_values, trajs_prob_dist))
+        return expectation
+    
+
+    def Q_function(self, h, H):
+        # Q function
+        # Summation
+        # h ... H-1
+        expectations = []
+        for t in range(h, H):
+            old_state = self.states[t]
+            new_state = self.states[t+1]
+            expectations.append(self.reward(old_state, new_state))
+        # Average
+        return np.mean(expectations)
+    
+
+    def B1_function(self, state_h, action_h):
+        # Baseline 1 Function: Entropy Differential
+        entropies = []
+        for i in range(len(self.theta)):
+            entropies.append(self.diff_entropy(action=action_h, state=state_h, diff_var=i))
+        # Average
+        return np.mean(entropies)
+
+
+    def A_function(self, h, H, state_h, action_h): 
+        # Advantage function
+        # TODO
+        # Add more baselines as you see fit and adjust B_function for testing
+        baseline_functions = [self.B1_function(state_h, action_h)]
+        B_function = baseline_functions[0]
+        return self.Q_function(h, H) - B_function
+
 
     def PPO(self, excluded_actions, lambd=0.05, gamma=0.01):
-        
-        # set up some variables and collect a trajectory
-        theta_results = []
-        H = len(self.episode)
-        FUSE_actions = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        states = []
+        # step 1: set up some variables and collect a trajectory
+        H               = len(self.episode)
+        FUSE_actions    = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+        theta_results   = []
+        states          = []
+        # populate H entries into 'states' array from self.episode
         for old_state, _, _ in self.episode:
             states.append(old_state)
-        states.append(self.episode[-1][1]) # get the last new state and add it too
-
 
         # argmax (theta)
         for theta in self.thetas:
 
             # Outer Expectation
             # E s(0), ..., s(H-1)
-            outer_expectation_result = 0
+            outer_expectation_result = []
             for state_h in states:
 
-                # sum from h=0 to H-1 (in code, from 0 to H exclusive)
+                # Summation
+                # h = 0 ... H-1 (in code, from 0 to H exclusive)
                 # same state (state_h) for this entire sum
                 sum_h_to_H = 0
                 for h in range(H):
 
-                    # find all the actions to take the Inner Expectation over
-                    # for FUSE, there's 9 actions, some may be excluded
-                    actions_at_iteration_h = [a for a in FUSE_actions if a not in excluded_actions]
-                    inner_expectation_result = 0
-                    for action_h in actions_at_iteration_h:
+                    # Inner Expectation
+                    # E a(0), ..., a(h)
+                    # for FUSE, there's 9 actions, but some may be excluded
+                    allowed_actions = [a for a in FUSE_actions if a not in excluded_actions]
+                    inner_expectation_result = []
+                    for action_h in allowed_actions:
                         # advantage function
-                        advantage = state_h + action_h + h
-                        inner_expectation_result += advantage
-                    inner_expectation_result /= len(actions_at_iteration_h)
-                    sum_h_to_H += inner_expectation_result
+                        advantage = self.A_function(h, H, state_h, action_h)
+                        inner_expectation_result.append(advantage)
+                    sum_h_to_H += np.mean(inner_expectation_result)
 
-                outer_expectation_result += sum_h_to_H
-            outer_expectation_result /= len(states)
+                outer_expectation_result.append(sum_h_to_H)
 
             # regularizer: gamma * KL function
             # here, # of k's = H = time step
-            regularizer = gamma * self.KL(H, H, theta)
-
+            regularizer = gamma * self.KL_function(H, theta)
             # add the result to theta_results
-            theta_results.append(outer_expectation_result - regularizer)
+            theta_results.append(np.mean(outer_expectation_result) - regularizer)
 
         # take the argmax of all theta_results
         best_theta_index = np.argmax(theta_results)
         best_theta = self.thetas[best_theta_index]
         return best_theta
-
-
