@@ -1229,7 +1229,9 @@ class Reinforce:
             sampled_returns.append(cumulative_reward)
 
         if not sampled_returns:
+            print(f"Warning: No relevant trajectories found for state {state_h} at step {h}.")
             return 0.0
+
 
         # Estimate the Value function as the average return across sampled trajectories
         return np.mean(sampled_returns)
@@ -1256,13 +1258,17 @@ class Reinforce:
             baseline = self.estimate_value_function(h, H, state_h, N)
         elif baseline_type == 'entropy':
             baseline = self.B1_function(state_h, action_h)
+        elif baseline_type == 'combined':
+            value_baseline = self.estimate_value_function(h, H, state_h, N)
+            entropy_baseline = self.B1_function(state_h, action_h)
+            baseline = 0.7 * value_baseline + 0.3 * entropy_baseline
         else:
             raise ValueError(f"Unsupported baseline_type: {baseline_type}")
 
         return self.Q_function(h, H) - baseline
 
 
-    def PPO(self, excluded_actions, lambd=0.05, gamma=0.01):
+    def PPO(self, excluded_actions, lambd=0.05, gamma=0.01, N=10, baseline_type='value'):
         # step 1: set up some variables and collect a trajectory
         H               = len(self.episode)
         FUSE_actions    = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -1293,7 +1299,7 @@ class Reinforce:
                     inner_expectation_result = []
                     for action_h in allowed_actions:
                         # advantage function
-                        advantage = self.A_function(h, H, state_h, action_h)
+                        advantage = self.A_function(h, H, state_h, action_h, N=N, baseline_type=baseline_type)
                         inner_expectation_result.append(advantage)
                     sum_h_to_H += np.mean(inner_expectation_result)
 
