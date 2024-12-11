@@ -1246,13 +1246,20 @@ class Reinforce:
         return np.mean(entropies)
 
 
-    def A_function(self, h, H, state_h, action_h): 
-        # Advantage function
+    def A_function(self, h, H, state_h, action_h, N=10, baseline_type='value'):
+        """
+        Computes the advantage function using a selected baseline.
+        """
         # TODO
-        # Add more baselines as you see fit and adjust B_function for testing
-        baseline_functions = [self.B1_function(state_h, action_h)]
-        B_function = baseline_functions[0]
-        return self.Q_function(h, H) - B_function
+        # Add more baselines as you see fit and adjust baseline for testing
+        if baseline_type == 'value':
+            baseline = self.compute_value_function(h, H, state_h, N)
+        elif baseline_type == 'entropy':
+            baseline = self.B1_function(state_h, action_h)
+        else:
+            raise ValueError(f"Unsupported baseline_type: {baseline_type}")
+
+        return self.Q_function(h, H) - baseline
 
 
     def PPO(self, excluded_actions, lambd=0.05, gamma=0.01):
