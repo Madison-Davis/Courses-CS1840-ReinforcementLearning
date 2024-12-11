@@ -1317,6 +1317,17 @@ class Reinforce:
         return best_theta
     
 
+    def alpha_func_NPG(self, fisher, v_grad):
+        """
+        Returns dynamic learning rate
+        """
+
+        delta = 1e-2
+        epsilon = 1e-6
+
+        t = np.sqrt( delta / (( v_grad.T @ np.linalg.inv(fisher) ) @ v_grad + epsilon) )
+        return t
+    
     def end_episode_NPG(self):
         """
         Ends the current episode, calculates the reward, and updates the policy
