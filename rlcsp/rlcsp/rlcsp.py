@@ -1315,3 +1315,109 @@ class Reinforce:
         best_theta_index = np.argmax(theta_results)
         best_theta = self.thetas[best_theta_index]
         return best_theta
+    
+
+    def end_episode_NPG(self):
+        """
+        Ends the current episode, calculates the reward, and updates the policy
+        """
+
+        reward = 0
+
+        # update the policy for each step of episode
+        for step in range(len(self.episode)):
+
+            old_state, new_state, action = self.episode[step]
+
+            reward = self.episodic_reward(step, log=True)
+            # print(old_state)
+            # print(new_state)
+            # print(reward)
+
+            pi = self.action_prob(action=action, state=old_state)
+            if pi == 0:
+                print("policy is zero. do not update policy")
+                print("Action is %s, old energy is %f, new energy is %f" % (action,
+                                                                            old_state.energy,
+                                                                            new_state.energy))
+                return reward
+
+            pi_vec = [0 for k in self.actions]
+            for i in range(len(pi_vec)):
+                pi_vec[i] = self.action_prob(action=self.actions[i], state=old_state)
+
+            # foreseen problem here is difference in sizes between diff_pi and pi_vec
+            diff_pi = self.diff_action_prob_vector(action=action, state=old_state)
+            fisher = (diff_pi/pi_vec) @ (diff_pi/pi_vec).T
+            lamb = 1e-3
+            unreg_v_grad = diff_pi*reward
+            v_grad = unreg_v_grad + lamb*np.eye(np.shape(unreg_v_grad)[0])
+
+            self.load_params()
+
+            unscaled_reward = reward
+            if self.reg_params['scale_reward'] and self.std_reward is not None and self.mean_reward is not None:
+                reward = (unscaled_reward - self.mean_reward) / self.std_reward
+                print('Reward standardization: ' + str(unscaled_reward) + ' --> ' + str(reward))
+
+            if 'max_reward' in self.reg_params:
+                reward = min(reward, self.reg_params['max_reward'])
+            if 'min_reward' in self.reg_params:
+                reward = max(reward, self.reg_params['max_reward'])
+
+            if self.alpha != 0:
+                alpha = self.alpha_func_NPG(fisher, v_grad)
+            else:
+                alpha = self.alpha_func()
+
+            self.update_f_scaling(old_state, new_state, action, alpha)
+            self.step += 1
+
+            if self.debug:
+                print('Reward: ' + str(reward))
+
+            # on the first steps we force reward to be from -1 to +1
+            # because features can be standardized using mean and std of energy by too few samples
+            if self.step < 10:
+                reward = 1 if reward > 1 else reward
+                reward = -1 if reward < -1 else reward
+                print('Reward forced to -1+1: ' + str(reward))
+
+            if self.debug:
+                print('Alpha: ' + str(alpha))
+                print('Old theta: ' + str(self.theta))
+
+            diff = ''
+            for i in range(len(self.theta)):
+                diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
+                diff += str(diff_action_prob) + ', '
+
+                if diff_action_prob != 0:
+                    entr = self.diff_entropy(action=action, state=old_state, diff_var=i)
+
+                    if self.step > 10:
+                        if self.debug:
+                            print(f'Diff var is {i}')
+                            print(f'Whole update: alpha * (reward * diff_action_prob - beta * entr) / pi')
+                            print(f'Whole update: {alpha} * '
+                                  f'({reward} * {diff_action_prob} + {self.reg_params["beta"]} * {entr} ) / {pi}')
+
+                        # self.theta[i] += alpha * (reward * diff_action_prob + self.reg_params['beta'] * entr) / pi
+                        fisher = (diff_action_prob/pi) @ (diff_action_prob/pi).T
+                        v_grad = reward * diff_action_prob
+                        self.theta[i] += alpha * (np.linalg.inv(fisher) @ v_grad  + self.reg_params['beta'] * entr) / pi
+
+            if self.debug:
+                print('reward: ' + str(reward))
+                print('beta: ' + str(self.reg_params['beta']))
+                print('Diff: ' + diff)
+                print('Probability: ' + str(pi))
+                print('New theta: ' + str(self.theta))
+
+            # update theta param in DB
+            self.sql_execute(self.sql_update_theta(unscaled_reward=unscaled_reward, scaled_reward=reward))
+            self.thetas.append(self.theta.copy())
+
+        # refresh episode
+        self.episode = []
+        return reward
