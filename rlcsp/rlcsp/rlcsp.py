@@ -1253,7 +1253,7 @@ class Reinforce:
         # TODO
         # Add more baselines as you see fit and adjust baseline for testing
         if baseline_type == 'value':
-            baseline = self.compute_value_function(h, H, state_h, N)
+            baseline = self.estimate_value_function(h, H, state_h, N)
         elif baseline_type == 'entropy':
             baseline = self.B1_function(state_h, action_h)
         else:
