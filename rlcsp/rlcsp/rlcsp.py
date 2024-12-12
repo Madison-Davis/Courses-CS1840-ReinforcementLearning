@@ -323,34 +323,34 @@ class Reinforce:
         if new_state.energy < self.max_energy:
             self.sql_execute(self.sql_update_reinforce(old_state, new_state, action, alpha))
 
-    def update(self, action, old_state, new_state, end_episode=False):
+    def update(self, action, old_state, new_state, end_episode=False, excluded_actions=[]):
         """
         Observes new state and end episode if the corresponding parameter is True
         and episodes have not fixed length or if it's just time to end the episode.
         Updates the policy if the episode ends.
         """
-        # TODO
-        # added this one-liner to force it to update more
-        self.fixed_episodes = False
         # if the energy of the structure is valid add it to the episode
         if old_state.energy <= self.max_energy:
             if new_state.energy <= self.max_energy or self.non_converge_penalty != 0:
                 self.episode.append((old_state, new_state, action))
 
+        #print(self.non_converge_penalty)
         # if the episode has the fixed length and achieves it, we end the episode
         # if the episode has the flexible length and we force to end it, end it
         if (len(self.episode) >= self.episode_length and self.fixed_episodes) or (end_episode is True and not self.fixed_episodes):
-            # TODO
-            # added this one-liner to force it to update more
-            self.fixed_episodes = True
-            return self.end_episode()
+            return self.end_episode(excluded_actions=excluded_actions)
 
-    def end_episode(self):
+    def end_episode(self, excluded_actions=[]):
         """
         Ends the current episode, calculates the reward, and updates the policy
         """
-        print("UPDATING")
         reward = 0
+        # TODO
+        # Added a print statement to recognize we've gotten this far
+        # comment the rest of this out if you're doing PPO or NPG
+        print("Updating Theta...")
+        #self.theta = self.PPO(excluded_actions, baseline_type='combined')
+        #self.theta = self.NPG(self.theta, excluded_actions)
 
         # update the policy for each step of episode
         for step in range(len(self.episode)):
@@ -405,12 +405,7 @@ class Reinforce:
                 print('Old theta: ' + str(self.theta))
 
             diff = ''
-
-            # TODO
-            # WHERE OUR MAIN CHANGE IS; UNCOMMENT THE BIG BLOCK BELOW FOR RLCSP
-            #self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
-            self.theta = self.NPG(self, self.theta, self.excluded_actions, lambd=0.05, gamma=0.01)
-            """
+            
             for i in range(len(self.theta)):
                 diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
                 diff += str(diff_action_prob) + ', '
@@ -426,7 +421,7 @@ class Reinforce:
                                   f'({reward} * {diff_action_prob} + {self.reg_params["beta"]} * {entr} ) / {pi}')
 
                         self.theta[i] += alpha * (reward * diff_action_prob + self.reg_params['beta'] * entr) / pi
-            """
+           
             if self.debug:
                 print('reward: ' + str(reward))
                 print('beta: ' + str(self.reg_params['beta']))
@@ -1298,7 +1293,11 @@ class Reinforce:
         theta_results   = []
 
         # argmax (theta)
-        for theta in self.thetas:
+        if len(self.thetas) == 0:
+            thetas = self.theta # just grab the first one, if this is first time around
+        else:
+            thetas = self.thetas
+        for theta in thetas:
 
             # Outer Expectation
             # E s(0), ..., s(H-1) ~ p_theta
@@ -1334,8 +1333,11 @@ class Reinforce:
             theta_results.append(np.mean(outer_expectation_result) - regularizer)
 
         # take the argmax of all theta_results
-        best_theta_index = np.argmax(theta_results)
-        best_theta = self.thetas[best_theta_index]
+        if len(self.thetas) == 0:
+            best_theta = self.theta # just grab the first one, if this is first time around
+        else:
+            best_theta_index = np.argmax(theta_results)
+            best_theta = thetas[best_theta_index]
         return best_theta
     
 

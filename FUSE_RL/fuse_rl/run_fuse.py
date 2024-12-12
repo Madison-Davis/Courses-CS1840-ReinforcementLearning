@@ -143,7 +143,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 	# TODO
     ## ------------  NEW VARIABLES ------------ ##
-	curr_val = 2 # use this to help determine avg_generation length
+	curr_val = 10e+18 # use this to help determine avg_generation length
 	avg_generations = []
 	no_generations = 0
 	avg_moves = []
@@ -325,7 +325,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 	o.write("################################################################################")
 	o.write("\n#										 #")
-	o.write("\n#			   Flexible Unit Structure Engine.C			 #")
+	o.write("\n#			   Flexible Unit Structure Engine			 #")
 	o.write("\n#				     (FUSE +CSP)				 #")
 	o.write("\n#				     v1.04					 #")
 	o.write("\n#										 #")
@@ -718,7 +718,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 						  theta_table=theta_table,
 						  reward_type=reward_type,
 						  features_set=['energy'],
-						  episode_length=1,
+						  episode_length=2, # TODO updated this to be 10, not 1
 						  max_energy=0,
 						  reinforce_id=reinforce_id,
 						  debug=reinforce_debug,
@@ -1369,25 +1369,31 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							## ---------  Avg # Of Moves Per Basin Hop Generation --------- ##
 							# sometimes there's literally just 0 moves, so forget these
 							# test to ensure it works/updates
-							print("\nAvg Moves:", avg_moves)
-							print("\nCurr No Moves:", no_moves)
+							print("\n[///////////////]")
+							print("[MOVES]")
+							print("Curr No Moves:", no_moves)
 							if no_moves != 0:
 								avg_moves.append(no_moves)
 							# reset to 0
 							no_moves = 0
+							print("Avg Moves:", avg_moves)
+							
 							
 
 							# TODO
 							## ---------  Avg # Of Generations To Lowest-Value --------- ##
-							print("\nAvg Gens:", avg_generations)
-							print("\nCurr No Gens:", no_generations)
 							e_output = min(generation_energies)
 							if e_output <= curr_val:
 								no_generations += 1
 							elif e_output > curr_val:
-								avg_generations.append(no_generations)
+								if no_generations != 0:
+									avg_generations.append(no_generations)
 								no_generations = 0
 							curr_val = e_output
+							print("\n[GENS]")
+							print("Curr No Gens:", no_generations)
+							print("Avg Gens:", avg_generations)
+							print("\n[///////////////]")
 
 
 							if search == 1:
@@ -1426,7 +1432,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							fuse_time += time.time() - start_t
 							start_t = time.time()
 							new_state = State(energy, unique=unique_energy)
-							reinforce.update(selected_move, old_state, new_state, end_episode=True)
+							reinforce.update(selected_move, old_state, new_state, end_episode=True, excluded_actions=excluded_actions)
 							action_executed = True
 
 							reinforce_update_time += time.time() - start_t
@@ -1529,16 +1535,16 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 	# TODO
 	## ------------  BH VARIANCE RESULT ------------ ##
-	o.write("\nAvg # Moves:")
+	o.write("\nAvg # Moves Per Basin Hop:")
 	o.write("\n" + str(numpy.mean(avg_moves)))
 
-	o.write("\n# Moves Array:")
+	o.write("\n# Moves Per Basin Hop Array:")
 	o.write("\n" + avg_moves)
 
-	o.write("\nAvg # Generations To Lowest:")
+	o.write("\nAvg # Generation-Length (High Energy => Low Energy):")
 	o.write("\n" + str(numpy.mean(avg_generations)))
 
-	o.write("\n# Gens Array:")
+	o.write("\nGeneration-Length Array (High Energy => Low Energy):")
 	o.write("\n" + avg_generations)
 
 
