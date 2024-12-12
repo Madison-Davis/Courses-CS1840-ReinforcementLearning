@@ -443,7 +443,6 @@ class Reinforce:
         """
         Calculates the entropy derivative
         """
-
         probs = list(map(self.action_prob, self.actions, [state for i in self.actions]))
         entropy = scipy.stats.entropy(probs)
         action_prob = self.action_prob(action=action, state=state)
@@ -743,7 +742,6 @@ class Reinforce:
         """
 
         f_num = len(self.f_array.keys())
-
         if f_num * self.actions.index(action) * 2 <= diff_var < f_num * (self.actions.index(action) + 1) * 2:
             # diff for theta * energy^(1/3)
             if diff_var % 2 == 0:
@@ -1227,8 +1225,14 @@ class Reinforce:
         """
         entropies = []
         # For each value in theta, compute its entropy differential
+
+        # OLD VERSION
         for i in range(len(self.theta)):
-            entropies.append(self.diff_entropy(action=action_h, state=state_h, diff_var=i))
+        #    entropies.append(self.diff_entropy(action=action_h, state=state_h, diff_var=i))
+            action_prob = self.action_prob(action=action_h, state=state_h)
+            diff_action_prob = self.diff_action_prob(action_h, state_h, 1)
+            entropies.append(-diff_action_prob * (math.log(action_prob) + 1))
+            
         # Return the average of the entropy differentials
         return np.mean(entropies)
 
@@ -1312,7 +1316,8 @@ class Reinforce:
             # in order to do this, we need to sample trajectories
             outer_expectation_result = []
             trajs, trajs_prob_dist = self.p_trajectories(H, theta)
-            for traj in trajs:
+
+            for y, traj in enumerate(trajs):
                 states = [i[0] for i in traj]
 
                 # Sum Over Inner Expectation
@@ -1325,7 +1330,7 @@ class Reinforce:
                     # for FUSE, there's 9 actions, but some may be excluded
                     inner_expectation_result = []
                     state_h = states[h]
-                    allowed_actions = [a for a in FUSE_actions if a not in excluded_actions]
+                    allowed_actions = [a for a in self.actions if a not in excluded_actions]
                     for action_h in allowed_actions:
                         # advantage function
                         advantage = self.A_function(h, H, state_h, action_h, states, N=N, baseline_type=baseline_type)
