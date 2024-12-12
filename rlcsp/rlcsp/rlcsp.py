@@ -1436,29 +1436,5 @@ class Reinforce:
         v_grad = self.compute_value_gradient(total_grads, total_rewards)
         eta = self.compute_eta(delta, fisher, v_grad)
         theta = theta + eta*(np.linalg.inv(fisher) @ v_grad)
-        # fisher = self.compute_fisher_matrix(, lambd)
-        # # v_grad = self.compute_value_gradient(total_grads, total_rewards)
-
-        # outer_v_grad = []
-        # outer_fisher = []
-        # trajs, _ = self.p_trajectories(self, H, theta, num_trajectories=10)
-        # for traj in trajs:
-        #     inner_v_grad = []
-        #     outer_fisher = []
-        #     for h in range(H):
-        #         state_h = traj[h][0]
-        #         action_h = traj[h][1]
-        #         pi = self.action_prob(action=action_h, state=state_h) # change to vector
-        #         diff_pi = self.diff_action_prob_vec(action=action_h, state=state_h)
-        #         b = np.mean()
-        #         inner_v_grad.append((diff_pi/pi)*(self.episodic_reward()-b)) # reformat to vector
-            
-        #     outer_v_grad.append(np.mean(inner_v_grad, axis=)) # reformat to vector
-        
-        # v_grad = np.mean(outer_v_grad, axis=) # reformat to vector
-
-        # eta = self.compute_eta(delta, fisher, v_grad)
-
-        # theta[i] = theta + eta*(np.linalg.inv(fisher) @ v_grad)
 
         return theta

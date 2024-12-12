@@ -15,142 +15,290 @@ Search routine: Basin Hopping
 
 ############################ Generating Initial Population ############################
 
-I      1          4e+18	  eV/atom
+I      1    6.66667e+18	  eV/atom
 I      2          2e+19	  eV/atom
-I      3    6.66667e+18	  eV/atom
+I      3          5e+18	  eV/atom
 I      4          2e+19	  eV/atom
 I      5          2e+19	  eV/atom
-I      6          2e+19	  eV/atom
-I      7          2e+19	  eV/atom
-I      8        2.5e+18	  eV/atom
-I      9          1e+19	  eV/atom
-I     10          1e+19	  eV/atom
-I     11          2e+19	  eV/atom
+I      6          5e+18	  eV/atom
+I      7    2.85714e+18	  eV/atom
+I      8          2e+19	  eV/atom
+I      9          2e+19	  eV/atom
+I     10          2e+19	  eV/atom
+I     11          1e+19	  eV/atom
 I     12          2e+19	  eV/atom
-I     13    3.33333e+18	  eV/atom
-I     14          1e+19	  eV/atom
-I     15          1e+19	  eV/atom
-I     16          1e+19	  eV/atom
+I     13    1.33333e+18	  eV/atom
+I     14          2e+19	  eV/atom
+I     15          2e+19	  eV/atom
+I     16          2e+19	  eV/atom
 I     17          2e+19	  eV/atom
 I     18          2e+19	  eV/atom
-I     19       1.25e+18	  eV/atom
+I     19          2e+19	  eV/atom
 I     20          2e+19	  eV/atom
-I     21    3.33333e+18	  eV/atom
-I     22        2.5e+18	  eV/atom
-I     23    6.66667e+18	  eV/atom
+I     21          5e+18	  eV/atom
+I     22          2e+19	  eV/atom
+I     23    1.53846e+18	  eV/atom
 I     24          2e+19	  eV/atom
 I     25          2e+19	  eV/atom
 I     26          5e+18	  eV/atom
 I     27          2e+19	  eV/atom
 I     28          1e+19	  eV/atom
-I     29          2e+19	  eV/atom
-I     30          1e+19	  eV/atom
-I     31    6.66667e+18	  eV/atom
-I     32        2.5e+18	  eV/atom
-I     33          4e+18	  eV/atom
-I     34    6.66667e+18	  eV/atom
-I     35          1e+19	  eV/atom
-I     36          2e+19	  eV/atom
-I     37          2e+18	  eV/atom
-I     38          2e+18	  eV/atom
-I     39    3.33333e+18	  eV/atom
+I     29    2.85714e+18	  eV/atom
+I     30    1.42857e+18	  eV/atom
+I     31    1.53846e+18	  eV/atom
+I     32          2e+19	  eV/atom
+I     33    2.22222e+18	  eV/atom
+I     34    2.85714e+18	  eV/atom
+I     35          2e+19	  eV/atom
+I     36          4e+18	  eV/atom
+I     37          2e+19	  eV/atom
+I     38          2e+19	  eV/atom
+I     39          5e+18	  eV/atom
 I     40          2e+19	  eV/atom
 I     41          2e+19	  eV/atom
 I     42          2e+19	  eV/atom
-I     43    1.42857e+18	  eV/atom
-I     44          2e+19	  eV/atom
-I     45          2e+19	  eV/atom
-I     46    3.33333e+18	  eV/atom
+I     43    1.81818e+18	  eV/atom
+I     44          4e+18	  eV/atom
+I     45          1e+19	  eV/atom
+I     46          2e+19	  eV/atom
 I     47          2e+19	  eV/atom
 I     48          2e+19	  eV/atom
 I     49          2e+19	  eV/atom
-I     50          5e+18	  eV/atom
-I     51          2e+19	  eV/atom
-I     52    2.85714e+18	  eV/atom
+I     50          2e+19	  eV/atom
+I     51    1.81818e+18	  eV/atom
+I     52          2e+19	  eV/atom
 I     53          2e+19	  eV/atom
 I     54          2e+19	  eV/atom
-I     55    6.66667e+18	  eV/atom
-I     56    1.66667e+18	  eV/atom
-I     57          2e+19	  eV/atom
+I     55          2e+19	  eV/atom
+I     56          2e+19	  eV/atom
+I     57    3.33333e+18	  eV/atom
 I     58          2e+19	  eV/atom
-I     59          1e+19	  eV/atom
-I     60          2e+19	  eV/atom
+I     59          2e+19	  eV/atom
+I     60    6.66667e+18	  eV/atom
 I     61          2e+19	  eV/atom
-I     62          1e+19	  eV/atom
-I     63    6.66667e+18	  eV/atom
+I     62          2e+19	  eV/atom
+I     63          2e+19	  eV/atom
 I     64          2e+19	  eV/atom
-I     65          2e+19	  eV/atom
-I     66          2e+19	  eV/atom
-I     67    1.66667e+18	  eV/atom
-I     68          2e+18	  eV/atom
-I     69        2.5e+18	  eV/atom
-I     70          2e+19	  eV/atom
-I     71          1e+19	  eV/atom
-I     72          1e+19	  eV/atom
-I     73    3.33333e+18	  eV/atom
+I     65    2.85714e+18	  eV/atom
+I     66          5e+18	  eV/atom
+I     67          2e+19	  eV/atom
+I     68          2e+19	  eV/atom
+I     69          1e+19	  eV/atom
+I     70    3.33333e+18	  eV/atom
+I     71          2e+19	  eV/atom
+I     72          2e+18	  eV/atom
+I     73          2e+19	  eV/atom
 I     74          2e+19	  eV/atom
-I     75          4e+18	  eV/atom
-I     76          1e+19	  eV/atom
-I     77          2e+18	  eV/atom
+I     75          2e+19	  eV/atom
+I     76          5e+18	  eV/atom
+I     77          2e+19	  eV/atom
 I     78          2e+19	  eV/atom
-I     79          2e+19	  eV/atom
+I     79        2.5e+18	  eV/atom
 I     80          2e+19	  eV/atom
 I     81          2e+19	  eV/atom
-I     82          1e+19	  eV/atom
-I     83          2e+19	  eV/atom
+I     82          2e+19	  eV/atom
+I     83          2e+18	  eV/atom
 I     84          2e+19	  eV/atom
 I     85          2e+19	  eV/atom
 I     86          2e+19	  eV/atom
-I     87        2.5e+18	  eV/atom
-I     88          2e+19	  eV/atom
-I     89          4e+18	  eV/atom
+I     87          2e+19	  eV/atom
+I     88          4e+18	  eV/atom
+I     89          2e+19	  eV/atom
 I     90          2e+19	  eV/atom
-I     91    6.66667e+18	  eV/atom
+I     91          2e+19	  eV/atom
 I     92          2e+19	  eV/atom
-I     93          2e+18	  eV/atom
-I     94          2e+19	  eV/atom
-I     95          1e+19	  eV/atom
-I     96       1.25e+18	  eV/atom
-I     97          2e+19	  eV/atom
-I     98    2.22222e+18	  eV/atom
-I     99          2e+19	  eV/atom
+I     93          2e+19	  eV/atom
+I     94    6.66667e+18	  eV/atom
+I     95          2e+19	  eV/atom
+I     96          2e+19	  eV/atom
+I     97          5e+18	  eV/atom
+I     98          1e+19	  eV/atom
+I     99          2e+18	  eV/atom
 I    100          2e+19	  eV/atom
 Initial population completed
 
-Lowest energy initial structure: 19 , 1.25e+18 eV/atom
+Lowest energy initial structure: 13 , 1.3333333333333332e+18 eV/atom
 
 ################################# Basin Hopping search ##################################
 
 
-Current lowest energy structure: 0 , 1.25e+18 eV/atom
+Current lowest energy structure: 0 , 1.3333333333333332e+18 eV/atom
 
-BH      1     	 1.25e+18   eV/atom
-Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    1  T = 0.02000
-Step 0. Time elapsed for fuse: 103.10065221786499, gulp: 0.0, reinforce_select: 0.12557649612426758, reinforce_update: 0.0
+BH      1  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    1  T = 0.02000
+Step 0. Time elapsed for fuse: 83.17580342292786, gulp: 0.0, reinforce_select: 0.14397525787353516, reinforce_update: 0.0
 
-BH      2     	 1.25e+18   eV/atom
-Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    2  T = 0.02000
-Step 1. Time elapsed for fuse: 103.46695303916931, gulp: 0.0, reinforce_select: 0.2453937530517578, reinforce_update: 0.0
+BH      2       	  1e+19   eV/atom
+Generation completed: E =  1.00000e+19 dE vs. global =  8.6667e+18 r:    2  T = 0.02000
+Step 1. Time elapsed for fuse: 86.30568099021912, gulp: 0.0, reinforce_select: 0.29106855392456055, reinforce_update: 0.0
 
-BH      3       	  2e+19   eV/atom
-Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    3  T = 0.02000
-Step 2. Time elapsed for fuse: 114.33425831794739, gulp: 0.0, reinforce_select: 0.4656510353088379, reinforce_update: 0.0
+BH      3  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    3  T = 0.02000
+Step 2. Time elapsed for fuse: 86.76008677482605, gulp: 0.0, reinforce_select: 0.41367673873901367, reinforce_update: 0.0
 
-BH      4       	  1e+19   eV/atom
-Generation completed: E =  1.00000e+19 dE vs. global =  8.7500e+18 r:    4  T = 0.02000
-Step 3. Time elapsed for fuse: 117.65945816040039, gulp: 0.0, reinforce_select: 0.6084246635437012, reinforce_update: 0.0
+BH      4  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    4  T = 0.02000
+Step 3. Time elapsed for fuse: 87.0508120059967, gulp: 0.0, reinforce_select: 0.5340399742126465, reinforce_update: 0.0
 
 BH      5       	  2e+19   eV/atom
-Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    5  T = 0.02000
-Step 4. Time elapsed for fuse: 119.11252164840698, gulp: 0.0009772777557373047, reinforce_select: 0.7521681785583496, reinforce_update: 0.0
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:    5  T = 0.02000
+Step 4. Time elapsed for fuse: 88.57177567481995, gulp: 0.0, reinforce_select: 0.6741311550140381, reinforce_update: 0.0
 
-BH      6     	 1.25e+18   eV/atom
-Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    6  T = 0.02000
-Step 5. Time elapsed for fuse: 119.84384942054749, gulp: 0.0009772777557373047, reinforce_select: 0.8805587291717529, reinforce_update: 0.0
+BH      6  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    6  T = 0.02000
+Step 5. Time elapsed for fuse: 88.82407331466675, gulp: 0.0, reinforce_select: 0.7980916500091553, reinforce_update: 0.0
 
-BH      7     	 1.25e+18   eV/atom
-Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    7  T = 0.02000
-Step 6. Time elapsed for fuse: 120.12652277946472, gulp: 0.0019643306732177734, reinforce_select: 1.0015861988067627, reinforce_update: 0.0
+BH      7  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    7  T = 0.02000
+Step 6. Time elapsed for fuse: 89.09326815605164, gulp: 0.0011563301086425781, reinforce_select: 0.9171962738037109, reinforce_update: 0.0
 
-BH      8       	  2e+19   eV/atom
-Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    8  T = 0.02000
+BH      8  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:    8  T = 0.02000
+Step 7. Time elapsed for fuse: 89.37580466270447, gulp: 0.002180337905883789, reinforce_select: 1.0377178192138672, reinforce_update: 0.0
+
+BH      9       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:    9  T = 0.02000
+Step 8. Time elapsed for fuse: 90.93436670303345, gulp: 0.002180337905883789, reinforce_select: 1.1718544960021973, reinforce_update: 0.0
+
+BH     10  	 1.42857e+18   eV/atom
+Generation completed: E =  1.42857e+18 dE vs. global =  9.5238e+16 r:   10  T = 0.02000
+Step 9. Time elapsed for fuse: 91.74075055122375, gulp: 0.003178119659423828, reinforce_select: 1.2961316108703613, reinforce_update: 0.0
+
+BH     11       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   11  T = 0.02000
+Step 10. Time elapsed for fuse: 91.9345052242279, gulp: 0.003178119659423828, reinforce_select: 1.4131147861480713, reinforce_update: 0.0
+
+BH     12  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   12  T = 0.02000
+Step 11. Time elapsed for fuse: 92.20875644683838, gulp: 0.003178119659423828, reinforce_select: 1.5319900512695312, reinforce_update: 0.0
+
+BH     13  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   13  T = 0.02000
+Step 12. Time elapsed for fuse: 92.49640083312988, gulp: 0.003178119659423828, reinforce_select: 1.6611828804016113, reinforce_update: 0.0
+
+BH     14       	  5e+18   eV/atom
+Generation completed: E =  5.00000e+18 dE vs. global =  3.6667e+18 r:   14  T = 0.02000
+Step 13. Time elapsed for fuse: 93.6145007610321, gulp: 0.003178119659423828, reinforce_select: 1.7938101291656494, reinforce_update: 0.0
+
+BH     15  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   15  T = 0.02000
+Step 14. Time elapsed for fuse: 93.87442517280579, gulp: 0.003178119659423828, reinforce_select: 1.9128541946411133, reinforce_update: 0.0
+
+BH     16  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   16  T = 0.02000
+Step 15. Time elapsed for fuse: 94.15145897865295, gulp: 0.003178119659423828, reinforce_select: 2.0359444618225098, reinforce_update: 0.0
+
+BH     17       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   17  T = 0.02000
+Step 16. Time elapsed for fuse: 99.59310150146484, gulp: 0.003178119659423828, reinforce_select: 2.211174726486206, reinforce_update: 0.0
+
+BH     18  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   18  T = 0.02000
+Step 17. Time elapsed for fuse: 99.85203981399536, gulp: 0.0042383670806884766, reinforce_select: 2.3281712532043457, reinforce_update: 0.0
+
+BH     19       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   19  T = 0.02000
+Step 18. Time elapsed for fuse: 101.71335649490356, gulp: 0.0042383670806884766, reinforce_select: 2.474274158477783, reinforce_update: 0.0
+
+BH     20  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   20  T = 0.02000
+Step 19. Time elapsed for fuse: 113.54243683815002, gulp: 0.0042383670806884766, reinforce_select: 2.6714112758636475, reinforce_update: 0.0
+
+BH     21       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   21  T = 0.02000
+Step 20. Time elapsed for fuse: 114.68477940559387, gulp: 0.005234241485595703, reinforce_select: 2.7991139888763428, reinforce_update: 0.0
+
+BH     22       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   22  T = 0.02000
+Step 21. Time elapsed for fuse: 115.11288022994995, gulp: 0.005234241485595703, reinforce_select: 2.9185123443603516, reinforce_update: 0.0
+
+BH     23  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   23  T = 0.02000
+Step 22. Time elapsed for fuse: 115.3899667263031, gulp: 0.005234241485595703, reinforce_select: 3.0345044136047363, reinforce_update: 0.0
+
+BH     24  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   24  T = 0.02000
+Step 23. Time elapsed for fuse: 115.67816972732544, gulp: 0.005234241485595703, reinforce_select: 3.150895833969116, reinforce_update: 0.0
+
+BH     25  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   25  T = 0.02000
+Step 24. Time elapsed for fuse: 116.16960453987122, gulp: 0.006230354309082031, reinforce_select: 3.2687363624572754, reinforce_update: 0.0
+
+BH     26  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   26  T = 0.02000
+Step 25. Time elapsed for fuse: 116.4381034374237, gulp: 0.006230354309082031, reinforce_select: 3.3860836029052734, reinforce_update: 0.0
+
+BH     27  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   27  T = 0.02000
+Step 26. Time elapsed for fuse: 116.70170712471008, gulp: 0.006230354309082031, reinforce_select: 3.5054826736450195, reinforce_update: 0.0
+
+BH     28       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   28  T = 0.02000
+Step 27. Time elapsed for fuse: 116.84073734283447, gulp: 0.006230354309082031, reinforce_select: 3.627864122390747, reinforce_update: 0.0
+
+BH     29  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   29  T = 0.02000
+Step 28. Time elapsed for fuse: 117.13562774658203, gulp: 0.006230354309082031, reinforce_select: 3.7449445724487305, reinforce_update: 0.0
+
+BH     30  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   30  T = 0.02000
+Step 29. Time elapsed for fuse: 117.41432476043701, gulp: 0.006230354309082031, reinforce_select: 3.8603577613830566, reinforce_update: 0.0
+
+BH     31  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   31  T = 0.02000
+Step 30. Time elapsed for fuse: 117.68860530853271, gulp: 0.006230354309082031, reinforce_select: 3.978722333908081, reinforce_update: 0.0
+
+BH     32  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   32  T = 0.02000
+Step 31. Time elapsed for fuse: 117.9548716545105, gulp: 0.006230354309082031, reinforce_select: 4.09492826461792, reinforce_update: 0.0
+
+BH     33       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   33  T = 0.02000
+Step 32. Time elapsed for fuse: 118.19778656959534, gulp: 0.006230354309082031, reinforce_select: 4.2103271484375, reinforce_update: 0.0
+
+BH     34  	 1.81818e+18   eV/atom
+Generation completed: E =  1.81818e+18 dE vs. global =  4.8485e+17 r:   34  T = 0.02000
+Step 33. Time elapsed for fuse: 119.66436243057251, gulp: 0.006230354309082031, reinforce_select: 4.343625545501709, reinforce_update: 0.0
+
+BH     35  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   35  T = 0.02000
+Step 34. Time elapsed for fuse: 119.92814803123474, gulp: 0.006230354309082031, reinforce_select: 4.459026098251343, reinforce_update: 0.0
+
+BH     36  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   36  T = 0.02000
+Step 35. Time elapsed for fuse: 120.20286750793457, gulp: 0.006230354309082031, reinforce_select: 4.575608968734741, reinforce_update: 0.0
+
+BH     37  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   37  T = 0.02000
+Step 36. Time elapsed for fuse: 120.48746538162231, gulp: 0.006230354309082031, reinforce_select: 4.691256523132324, reinforce_update: 0.0
+
+BH     38  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   38  T = 0.02000
+Step 37. Time elapsed for fuse: 120.75078892707825, gulp: 0.006230354309082031, reinforce_select: 4.809439420700073, reinforce_update: 0.0
+
+BH     39       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8667e+19 r:   39  T = 0.02000
+Step 38. Time elapsed for fuse: 121.54005718231201, gulp: 0.0071523189544677734, reinforce_select: 4.936212062835693, reinforce_update: 0.0
+
+BH     40  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   40  T = 0.02000
+Step 39. Time elapsed for fuse: 121.82924890518188, gulp: 0.0071523189544677734, reinforce_select: 5.057491064071655, reinforce_update: 0.0
+
+BH     41  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   41  T = 0.02000
+Step 40. Time elapsed for fuse: 122.33109259605408, gulp: 0.0071523189544677734, reinforce_select: 5.181896448135376, reinforce_update: 0.0
+
+BH     42  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   42  T = 0.02000
+Step 41. Time elapsed for fuse: 122.63030886650085, gulp: 0.0071523189544677734, reinforce_select: 5.303036212921143, reinforce_update: 0.0
+
+BH     43  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   43  T = 0.02000
+Step 42. Time elapsed for fuse: 122.91138625144958, gulp: 0.008138895034790039, reinforce_select: 5.423348903656006, reinforce_update: 0.0
+
+BH     44  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   44  T = 0.02000
+Step 43. Time elapsed for fuse: 123.19393539428711, gulp: 0.008138895034790039, reinforce_select: 5.541573762893677, reinforce_update: 0.0
+
+BH     45  	 1.33333e+18   eV/atom
+Generation completed: E =  1.33333e+18 dE vs. global =  0.0000e+00 r:   45  T = 0.02000
