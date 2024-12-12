@@ -405,7 +405,7 @@ class Reinforce:
             # Added a print statement to recognize we've gotten this far
             # comment the rest of this out if you're doing PPO or NPG
             print("Updating Theta...")
-            #self.theta = self.NPG(self.theta, excluded_actions)
+            # self.theta = self.NPG(self.theta, excluded_actions)
             self.theta = self.PPO(excluded_actions, baseline_type='entropy')
             """
             for i in range(len(self.theta)):
@@ -1364,18 +1364,18 @@ class Reinforce:
         trajs, _ = self.p_trajectories(H, theta, num_trajectories=10)
 
         N = len(trajs)
-        for traj in range(N):
+        for traj in trajs:
             trajectory_reward = []
             trajectory_grad = []
         
-            for h in range(H):
-                action_h = traj[h][0]
-                state_h = traj[h][1]
+            for h in range(H - 1):
+                action_h = traj[h][1]
+                state_h = traj[h][0]
                 pi_vec = []
                 for action in self.actions:
                     pi_vec.append(self.action_prob(action, state_h))
-                grad = self.diff_action_prob_vector(action=action_h,state=state_h)/pi_vec
-                reward = self.reward(state_h, self.states[self.states.index(state_h) + 1])
+                grad = [x / y for x, y in zip(self.diff_action_prob_vector(action=action_h,state=state_h), pi_vec)]
+                reward = self.reward(state_h, traj[h + 1][0])
                 trajectory_reward.append(reward)
                 trajectory_grad.append(grad)
 
@@ -1385,23 +1385,56 @@ class Reinforce:
         return total_grads, total_rewards
     
 
+    # def compute_fisher_matrix(self, grads, lamb=1e-3):
+    #     N = len(grads)
+    #     second_sum = 0
+
+    #     for n in range(N):
+    #         first_sum = 0
+    #         first_average = 0
+    #         H = len(grads[n])
+
+    #         for h in range(H):
+    #             first_sum = first_sum + (grads[n][h] @ grads[n][h].T)
+
+    #         first_average = (1/H)*first_sum
+    #         second_sum = second_sum + first_average
+    #     second_average = (1/N)*second_sum
+
+    #     return second_average + lamb*np.eye(np.shape(second_average)[0])
+
     def compute_fisher_matrix(self, grads, lamb=1e-3):
-        N = len(grads)
+        """
+        Computes the Fisher Information Matrix from gradient data.
+        
+        Args:
+            grads (list of lists of lists): Nested structure of gradients.
+            lamb (float): Regularization parameter for the Fisher matrix.
+        
+        Returns:
+            np.ndarray: Regularized Fisher Information Matrix.
+        """
+        N = len(grads)  # Number of trajectories
         second_sum = 0
 
         for n in range(N):
             first_sum = 0
-            first_average = 0
-            H = len(grads[n])
+            H = len(grads[n])  # Length of the trajectory
 
             for h in range(H):
-                first_sum = first_sum + (grads[n][h] @ grads[n][h].T)
+                # Convert grads[n][h] to NumPy array for matrix operations
+                grad_h = np.array(grads[n][h])
+                first_sum += np.outer(grad_h, grad_h)  # Compute outer product (gradient * gradient.T)
 
-            first_average = (1/H)*first_sum
-            second_sum = second_sum + first_average
-        second_average = (1/N)*second_sum
+            first_average = first_sum / H  # Average over trajectory
+            second_sum += first_average
 
-        return second_average + lamb*np.eye(np.shape(second_average)[0])
+        second_average = second_sum / N  # Average over all trajectories
+
+        # Regularize the Fisher matrix
+        regularized_fisher = second_average + lamb * np.eye(second_average.shape[0])
+
+        return regularized_fisher
     
 
     def compute_value_gradient(self, grads, rewards):
@@ -1425,7 +1458,7 @@ class Reinforce:
                     first_sum = first_sum + rewards[n][t]
                 
                 baseline_diff = first_sum - b
-                second_sum = second_sum + (grads[n][h] * baseline_diff)
+                second_sum = second_sum + (np.array(grads[n][h]) * baseline_diff)
 
             first_average = (1/H)*second_sum
             third_sum = third_sum + first_average
@@ -1455,6 +1488,6 @@ class Reinforce:
         fisher = self.compute_fisher_matrix(total_grads, lambd)
         v_grad = self.compute_value_gradient(total_grads, total_rewards)
         eta = self.compute_eta(delta, fisher, v_grad)
-        theta = theta + eta*(np.linalg.inv(fisher) @ v_grad)
+        theta += np.concatenate((eta*(np.linalg.inv(fisher) @ v_grad), eta*(np.linalg.inv(fisher) @ v_grad)))
 
-        return theta
+        return theta.tolist()
