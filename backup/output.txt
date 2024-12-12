@@ -1,0 +1,156 @@
+################################################################################
+#										 #
+#			   Flexible Unit Structure Engine			 #
+#				     (FUSE +CSP)				 #
+#				     v1.04					 #
+#										 #
+################################################################################
+
+
+Input formula = Y2O3
+Maximum number of formula units = 16
+Ionic input formula
+ap calculated to be: 4.741 Angstroms
+Search routine: Basin Hopping
+
+############################ Generating Initial Population ############################
+
+I      1          4e+18	  eV/atom
+I      2          2e+19	  eV/atom
+I      3    6.66667e+18	  eV/atom
+I      4          2e+19	  eV/atom
+I      5          2e+19	  eV/atom
+I      6          2e+19	  eV/atom
+I      7          2e+19	  eV/atom
+I      8        2.5e+18	  eV/atom
+I      9          1e+19	  eV/atom
+I     10          1e+19	  eV/atom
+I     11          2e+19	  eV/atom
+I     12          2e+19	  eV/atom
+I     13    3.33333e+18	  eV/atom
+I     14          1e+19	  eV/atom
+I     15          1e+19	  eV/atom
+I     16          1e+19	  eV/atom
+I     17          2e+19	  eV/atom
+I     18          2e+19	  eV/atom
+I     19       1.25e+18	  eV/atom
+I     20          2e+19	  eV/atom
+I     21    3.33333e+18	  eV/atom
+I     22        2.5e+18	  eV/atom
+I     23    6.66667e+18	  eV/atom
+I     24          2e+19	  eV/atom
+I     25          2e+19	  eV/atom
+I     26          5e+18	  eV/atom
+I     27          2e+19	  eV/atom
+I     28          1e+19	  eV/atom
+I     29          2e+19	  eV/atom
+I     30          1e+19	  eV/atom
+I     31    6.66667e+18	  eV/atom
+I     32        2.5e+18	  eV/atom
+I     33          4e+18	  eV/atom
+I     34    6.66667e+18	  eV/atom
+I     35          1e+19	  eV/atom
+I     36          2e+19	  eV/atom
+I     37          2e+18	  eV/atom
+I     38          2e+18	  eV/atom
+I     39    3.33333e+18	  eV/atom
+I     40          2e+19	  eV/atom
+I     41          2e+19	  eV/atom
+I     42          2e+19	  eV/atom
+I     43    1.42857e+18	  eV/atom
+I     44          2e+19	  eV/atom
+I     45          2e+19	  eV/atom
+I     46    3.33333e+18	  eV/atom
+I     47          2e+19	  eV/atom
+I     48          2e+19	  eV/atom
+I     49          2e+19	  eV/atom
+I     50          5e+18	  eV/atom
+I     51          2e+19	  eV/atom
+I     52    2.85714e+18	  eV/atom
+I     53          2e+19	  eV/atom
+I     54          2e+19	  eV/atom
+I     55    6.66667e+18	  eV/atom
+I     56    1.66667e+18	  eV/atom
+I     57          2e+19	  eV/atom
+I     58          2e+19	  eV/atom
+I     59          1e+19	  eV/atom
+I     60          2e+19	  eV/atom
+I     61          2e+19	  eV/atom
+I     62          1e+19	  eV/atom
+I     63    6.66667e+18	  eV/atom
+I     64          2e+19	  eV/atom
+I     65          2e+19	  eV/atom
+I     66          2e+19	  eV/atom
+I     67    1.66667e+18	  eV/atom
+I     68          2e+18	  eV/atom
+I     69        2.5e+18	  eV/atom
+I     70          2e+19	  eV/atom
+I     71          1e+19	  eV/atom
+I     72          1e+19	  eV/atom
+I     73    3.33333e+18	  eV/atom
+I     74          2e+19	  eV/atom
+I     75          4e+18	  eV/atom
+I     76          1e+19	  eV/atom
+I     77          2e+18	  eV/atom
+I     78          2e+19	  eV/atom
+I     79          2e+19	  eV/atom
+I     80          2e+19	  eV/atom
+I     81          2e+19	  eV/atom
+I     82          1e+19	  eV/atom
+I     83          2e+19	  eV/atom
+I     84          2e+19	  eV/atom
+I     85          2e+19	  eV/atom
+I     86          2e+19	  eV/atom
+I     87        2.5e+18	  eV/atom
+I     88          2e+19	  eV/atom
+I     89          4e+18	  eV/atom
+I     90          2e+19	  eV/atom
+I     91    6.66667e+18	  eV/atom
+I     92          2e+19	  eV/atom
+I     93          2e+18	  eV/atom
+I     94          2e+19	  eV/atom
+I     95          1e+19	  eV/atom
+I     96       1.25e+18	  eV/atom
+I     97          2e+19	  eV/atom
+I     98    2.22222e+18	  eV/atom
+I     99          2e+19	  eV/atom
+I    100          2e+19	  eV/atom
+Initial population completed
+
+Lowest energy initial structure: 19 , 1.25e+18 eV/atom
+
+################################# Basin Hopping search ##################################
+
+
+Current lowest energy structure: 0 , 1.25e+18 eV/atom
+
+BH      1     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    1  T = 0.02000
+Step 0. Time elapsed for fuse: 103.10065221786499, gulp: 0.0, reinforce_select: 0.12557649612426758, reinforce_update: 0.0
+
+BH      2     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    2  T = 0.02000
+Step 1. Time elapsed for fuse: 103.46695303916931, gulp: 0.0, reinforce_select: 0.2453937530517578, reinforce_update: 0.0
+
+BH      3       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    3  T = 0.02000
+Step 2. Time elapsed for fuse: 114.33425831794739, gulp: 0.0, reinforce_select: 0.4656510353088379, reinforce_update: 0.0
+
+BH      4       	  1e+19   eV/atom
+Generation completed: E =  1.00000e+19 dE vs. global =  8.7500e+18 r:    4  T = 0.02000
+Step 3. Time elapsed for fuse: 117.65945816040039, gulp: 0.0, reinforce_select: 0.6084246635437012, reinforce_update: 0.0
+
+BH      5       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    5  T = 0.02000
+Step 4. Time elapsed for fuse: 119.11252164840698, gulp: 0.0009772777557373047, reinforce_select: 0.7521681785583496, reinforce_update: 0.0
+
+BH      6     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    6  T = 0.02000
+Step 5. Time elapsed for fuse: 119.84384942054749, gulp: 0.0009772777557373047, reinforce_select: 0.8805587291717529, reinforce_update: 0.0
+
+BH      7     	 1.25e+18   eV/atom
+Generation completed: E =  1.25000e+18 dE vs. global =  0.0000e+00 r:    7  T = 0.02000
+Step 6. Time elapsed for fuse: 120.12652277946472, gulp: 0.0019643306732177734, reinforce_select: 1.0015861988067627, reinforce_update: 0.0
+
+BH      8       	  2e+19   eV/atom
+Generation completed: E =  2.00000e+19 dE vs. global =  1.8750e+19 r:    8  T = 0.02000
