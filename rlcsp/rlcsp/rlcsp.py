@@ -324,6 +324,7 @@ class Reinforce:
             self.sql_execute(self.sql_update_reinforce(old_state, new_state, action, alpha))
 
     def update(self, action, old_state, new_state, end_episode=False):
+        print("HERE")
         """
         Observes new state and end episode if the corresponding parameter is True
         and episodes have not fixed length or if it's just time to end the episode.
@@ -402,8 +403,9 @@ class Reinforce:
 
             diff = ''
 
-            # WHERE MY CHANGE IS (UNCOMMENT OUT """ PART AND COMMENT THIS LINE FOR RLCSP)
-            self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
+            # TODO
+            # WHERE OUR TESTING IS (UNCOMMENT OUT """ PART AND COMMENT THIS LINE FOR RLCSP)
+            self.theta = self.PPO(self, self.excluded_actions)
 
             """
             for i in range(len(self.theta)):
@@ -1109,14 +1111,31 @@ class Reinforce:
                 print(f'DB query {sql} failed in attempt {attempts} with error: {e}')
                 time.sleep(10)
         
-    # TODO
+    
     ## ------------  NEW FUNCTIONS ------------ ##
-    def p_trajectories(self, H, theta, num_trajectories=10):
-        # create the distribution from which to sample trajectories, for KL_function
-        # trajectories are of length H
-        # sample and store trajectories
+    # TODO
+    """
+    List of all new functions:
+    p_trajectories
+    KL_function
+    Q_function
+    B1_function
+    B2_function
+    A_function
+    PPO
+    alpha_func_NPG
+    end_episode_NPG    
+    """
 
+    def p_trajectories(self, H, theta, num_trajectories=10):
+        """
+        p_theta Function
+        create the distribution from which to sample trajectories, for KL_function
+        each trajectory will be of length H and taken from theta
+        """
+        # sample and store trajectories in 'all_states'
         all_states = []
+
         # populate H entries into 'states' array from self.episode
         for old_state, _, _ in self.episode:
             all_states.append(old_state)
@@ -1131,8 +1150,7 @@ class Reinforce:
             # step 2: get initial state
             traj = []
             curr_state = self.states[0] 
-            traj_prob = 1 # u(s0) = 1 as we start from here
-            traj.append(curr_state)
+            traj_prob = 1 # u(s0) = 1 as we start from here always
 
             # for h iterations...
             for h in range(H):
@@ -1165,15 +1183,17 @@ class Reinforce:
         return trajs, trajs_prob_dist
 
 
-    def KL_function(self, H, theta):
-        # see slide 23 in 11/11/24 slides on PPO
-        trajs, trajs_prob_dist = self.p_trajectories(self, H, theta, num_trajectories=10)
-        # in the situation where trajs_prob_dist does not sum to 1, normalize it
+    def KL_function(self, H, theta, trajs, trajs_prob_dist):
+        """
+        KL Divergence Function
+        see slide 23 in 11/11/24 slides on the formulation of this function
+        """
+        # Pre-process: in the situation where trajs_prob_dist does not sum to 1, normalize it
         total_probability = sum(trajs_prob_dist)
         trajs_prob_dist = [p / total_probability for p in trajs_prob_dist]
         
         # Expectation
-        # E t(0), ..., t(#)
+        # E t(0), ..., t(#) ~ trajs_prob_dist
         expected_values = []
         for traj in trajs:
             single_traj_sum = 0
@@ -1183,13 +1203,15 @@ class Reinforce:
                 pi_term = self.action_prob(action=action_h, state=state_h)
                 single_traj_sum += np.log(1 / pi_term)
             expected_values.append(single_traj_sum)
-        # Average
-        expectation = sum(v * p for v, p in zip(expected_values, trajs_prob_dist))
+        # Average Expectation
+        expectation = sum(v * p for v, p in zip(trajs_prob_dist, expected_values))
         return expectation
     
 
     def Q_function(self, h, H):
-        # Q function
+        """
+        Q Function
+        """
         # Summation
         # h ... H-1
         expectations = []
@@ -1197,16 +1219,33 @@ class Reinforce:
             old_state = self.states[t]
             new_state = self.states[t+1]
             expectations.append(self.reward(old_state, new_state))
-        # Average
+        # Average Expectation
         return np.mean(expectations)
 
-    def estimate_value_function(self, h, H, state_h, N=10):
-        """
-        Estimates the Value function for a given state using N sampled trajectories.
-        """
-        gamma = 0.9  # Discount factor (set to 1.0 for no discounting, or adjust as needed)
-        # Discount factor is used to place more weight on samples closer to the initial state
 
+    def B1_function(self, state_h, action_h):
+        """
+        Baseline 1 Function
+        Entropy Differential
+        """
+        entropies = []
+        # For each value in theta, compute its entropy differential
+        for i in range(len(self.theta)):
+            entropies.append(self.diff_entropy(action=action_h, state=state_h, diff_var=i))
+        # Return the average of the entropy differentials
+        return np.mean(entropies)
+
+
+    def B2_function(self, h, H, state_h, N=10):
+        """
+        Baseline 2 Function
+        Value Function
+        Estimates the Value Function for a given state using N sampled trajectories.
+        """
+        # Discount factor (set to 1.0 for no discounting, or adjust as needed)
+        # Discount factor is used to place more weight on samples closer to the initial state
+        gamma = 0.9  
+       
         # Use p_trajectories to sample N trajectories and their probabilities
         trajectories, _ = self.p_trajectories(H, self.theta, num_trajectories=N)
 
@@ -1221,7 +1260,8 @@ class Reinforce:
 
             for step in traj:
                 state, action = step
-                if state == state_h:  # Start from the correct state
+                # Start from the correct state, state_h
+                if state == state_h:  
                     reward = self.reward(state, self.states[self.states.index(state) + 1])
                     cumulative_reward += discount * reward
                     discount *= gamma
@@ -1232,71 +1272,59 @@ class Reinforce:
             print(f"Warning: No relevant trajectories found for state {state_h} at step {h}.")
             return 0.0
 
-
         # Estimate the Value function as the average return across sampled trajectories
         return np.mean(sampled_returns)
 
 
-    
-
-    def B1_function(self, state_h, action_h):
-        # Baseline 1 Function: Entropy Differential
-        entropies = []
-        for i in range(len(self.theta)):
-            entropies.append(self.diff_entropy(action=action_h, state=state_h, diff_var=i))
-        # Average
-        return np.mean(entropies)
-
-
     def A_function(self, h, H, state_h, action_h, N=10, baseline_type='value'):
         """
+        Advantage Function (And Psuedo-Advantage, in case of non Q-V)
         Computes the advantage function using a selected baseline.
         """
-        # TODO
-        # Add more baselines as you see fit and adjust baseline for testing
         if baseline_type == 'value':
-            baseline = self.estimate_value_function(h, H, state_h, N)
+            baseline = self.B2_function(h, H, state_h, N)
         elif baseline_type == 'entropy':
             baseline = self.B1_function(state_h, action_h)
         elif baseline_type == 'combined':
-            value_baseline = self.estimate_value_function(h, H, state_h, N)
+            value_baseline = self.B2_function(h, H, state_h, N)
             entropy_baseline = self.B1_function(state_h, action_h)
             baseline = 0.7 * value_baseline + 0.3 * entropy_baseline
         else:
             raise ValueError(f"Unsupported baseline_type: {baseline_type}")
-
         return self.Q_function(h, H) - baseline
 
 
     def PPO(self, excluded_actions, lambd=0.05, gamma=0.01, N=10, baseline_type='value'):
-        # step 1: set up some variables and collect a trajectory
+        """
+        Proximal Policy Optimization
+        """
+        # step 1: set up some variables
         H               = len(self.episode)
         FUSE_actions    = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
         theta_results   = []
-        states          = []
-        # populate H entries into 'states' array from self.episode
-        for old_state, _, _ in self.episode:
-            states.append(old_state)
 
         # argmax (theta)
         for theta in self.thetas:
 
             # Outer Expectation
-            # E s(0), ..., s(H-1)
+            # E s(0), ..., s(H-1) ~ p_theta
+            # in order to do this, we need to sample trajectories
             outer_expectation_result = []
-            for state_h in states:
+            trajs, trajs_prob_dist = self.p_trajectories(self, H, theta)
+            for traj in trajs:
+                states = [i[0] for i in traj]
 
-                # Summation
+                # Sum Over Inner Expectation
                 # h = 0 ... H-1 (in code, from 0 to H exclusive)
-                # same state (state_h) for this entire sum
                 sum_h_to_H = 0
                 for h in range(H):
-
+                    
                     # Inner Expectation
-                    # E a(0), ..., a(h)
+                    # E a(0), ..., a(h) ~ pi( * |state_h)
                     # for FUSE, there's 9 actions, but some may be excluded
-                    allowed_actions = [a for a in FUSE_actions if a not in excluded_actions]
                     inner_expectation_result = []
+                    state_h = states[h]
+                    allowed_actions = [a for a in FUSE_actions if a not in excluded_actions]
                     for action_h in allowed_actions:
                         # advantage function
                         advantage = self.A_function(h, H, state_h, action_h, N=N, baseline_type=baseline_type)
@@ -1304,10 +1332,10 @@ class Reinforce:
                     sum_h_to_H += np.mean(inner_expectation_result)
 
                 outer_expectation_result.append(sum_h_to_H)
-
+            
             # regularizer: gamma * KL function
             # here, # of k's = H = time step
-            regularizer = gamma * self.KL_function(H, theta)
+            regularizer = gamma * self.KL_function(H, theta, trajs, trajs_prob_dist)
             # add the result to theta_results
             theta_results.append(np.mean(outer_expectation_result) - regularizer)
 
@@ -1319,15 +1347,14 @@ class Reinforce:
 
     def alpha_func_NPG(self, fisher, v_grad):
         """
-        Returns dynamic learning rate
+        Returns Dynamic Learning Rate
         """
-
         delta = 1e-2
         epsilon = 1e-6
-
         t = np.sqrt( delta / (( v_grad.T @ np.linalg.inv(fisher) ) @ v_grad + epsilon) )
         return t
     
+
     def end_episode_NPG(self):
         """
         Ends the current episode, calculates the reward, and updates the policy

@@ -140,6 +140,16 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 	 target_energy=0,
 	 write_graph_end=True
 	 ):
+	
+	print("HERETO")
+
+	# TODO
+    ## ------------  NEW VARIABLES ------------ ##
+	lowest_val_compound = "1.25E+18" # for Y2O3, change this as needed
+	avg_generations = []
+	no_generations = 0
+	avg_moves = []
+	no_moves = 0
 
 	new_structure = None
 	gulp_time = 0
@@ -966,11 +976,18 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 									excluded_actions.append('4')
 								selected_move = reinforce.select_action(old_state, excluded_actions=excluded_actions)
 								print(f'Move {selected_move}, attempts {actions_counter[selected_move]}')
+								# TODO
+								## --------------- # Moves Per Basin Hop --------------- ##
+								no_moves = actions_counter[selected_move]
 							else:
 								actions_counter[selected_move] += 1
 								if actions_counter[selected_move] > max_failed_actions and selected_move not in excluded_actions:
 									excluded_actions.append(selected_move)
 								print(f'Move {selected_move}, attempts {actions_counter[selected_move]}')
+								# TODO
+								## --------------- # Moves Per Basin Hop --------------- ##
+								no_moves = actions_counter[selected_move]
+								
 							# selected_move = random.choice(actions)
 							# print(selected_move)
 							reinforce_select_time += time.time() - start_t
@@ -1349,6 +1366,33 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							if use_amds == True:
 								print(str("E = "+str("{0: .5e}").format(min(generation_energies)) + " dE vs. global = " + str("{0: .4e}").format(dE).rjust(7)+" r: "+str(r).rjust(4)+" Amd match = "+str(amd_matches)),end='')
 
+
+							# TODO
+							## ---------  Avg # Of Moves Per Basin Hop Generation --------- ##
+							# sometimes there's literally just 0 moves, so forget these
+							# test to ensure it works/updates
+							print(avg_moves)
+							print(no_moves)
+							if no_moves != 0:
+								avg_moves.append(no_moves)
+							# reset to 0
+							no_moves = 0
+							
+
+							# TODO
+							## ---------  Avg # Of Generations To Lowest-Value --------- ##
+							print(str(e_output))
+							print(avg_generations)
+							print(no_generations)
+							e_output = str("{0: .5e}").format(min(generation_energies))
+							if e_output == lowest_val_compound:
+								if no_generations != 0:
+									avg_generations.append(no_generations)
+								no_generations = 0
+							else:
+								no_generations += 1
+
+
 							if search == 1:
 								print("	 T = "+str("{0:.5f}").format(T))
 							else:
@@ -1480,10 +1524,20 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 			o.write("\n\n*** Max number of steps reached stopping calculation ***")
 			print("Current global minimum energy: "+str(min(energies))+" Structure: "+str(energies.index(min(energies))))
 			o.write("\nCurrent Global minimum energy: "+str(min(energies))+" Structure: "+str(energies.index(min(energies))))
-
+			
 	### while this will now run all of the initial population, need to then log & store the data!
 	# now need to write out what we've got so far...
 	print ("Writing restart files...")
+
+
+	# TODO
+	## ------------  BH VARIANCE RESULT ------------ ##
+	o.write("\nAvg # Moves:")
+	o.write("\n" + str(numpy.mean(avg_moves)))
+
+	o.write("\nAvg # Generations To Lowest:")
+	o.write("\n" + str(numpy.mean(avg_generations)))
+
 
 	try:
 		min_structure_num=energies.index(min(energies))
