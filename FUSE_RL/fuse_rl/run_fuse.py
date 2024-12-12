@@ -719,7 +719,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 						  reward_type=reward_type,
 						  features_set=['energy'],
 						  episode_length=2, # TODO updated this to be 10, not 1
-						  max_energy=0,
+						  max_energy=10e+18, # TODO updated this to be 
 						  reinforce_id=reinforce_id,
 						  debug=reinforce_debug,
 						  reg_params=reg_params)

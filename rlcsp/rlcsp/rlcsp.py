@@ -330,6 +330,7 @@ class Reinforce:
         Updates the policy if the episode ends.
         """
         # if the energy of the structure is valid add it to the episode
+        print(self.max_energy)
         if old_state.energy <= self.max_energy:
             if new_state.energy <= self.max_energy or self.non_converge_penalty != 0:
                 self.episode.append((old_state, new_state, action))
@@ -345,12 +346,6 @@ class Reinforce:
         Ends the current episode, calculates the reward, and updates the policy
         """
         reward = 0
-        # TODO
-        # Added a print statement to recognize we've gotten this far
-        # comment the rest of this out if you're doing PPO or NPG
-        print("Updating Theta...")
-        #self.theta = self.PPO(excluded_actions, baseline_type='combined')
-        #self.theta = self.NPG(self.theta, excluded_actions)
 
         # update the policy for each step of episode
         for step in range(len(self.episode)):
@@ -405,7 +400,14 @@ class Reinforce:
                 print('Old theta: ' + str(self.theta))
 
             diff = ''
-            
+
+            # TODO
+            # Added a print statement to recognize we've gotten this far
+            # comment the rest of this out if you're doing PPO or NPG
+            print("Updating Theta...")
+            #self.theta = self.NPG(self.theta, excluded_actions)
+            #self.theta = self.PPO(excluded_actions, baseline_type='combined')
+            """
             for i in range(len(self.theta)):
                 diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
                 diff += str(diff_action_prob) + ', '
@@ -421,7 +423,7 @@ class Reinforce:
                                   f'({reward} * {diff_action_prob} + {self.reg_params["beta"]} * {entr} ) / {pi}')
 
                         self.theta[i] += alpha * (reward * diff_action_prob + self.reg_params['beta'] * entr) / pi
-           
+            """
             if self.debug:
                 print('reward: ' + str(reward))
                 print('beta: ' + str(self.reg_params['beta']))
@@ -475,9 +477,11 @@ class Reinforce:
             print('New state energy: ' + str(new_state.energy))
 
         # the penalty can be calculated by the agent
+        """ 
         if self.reg_params['smart_penalty']:
             if old_state.energy == new_state.energy or new_state.energy > self.max_energy or not new_state.isunique:
                 energies_num = max(1, int(len(self.f_array[Reinforce.f_energy]) / 10))
+                print(energies_num, self.f_array[Reinforce.f_energy])
                 high_energy = statistics.mean(heapq.nlargest(energies_num, self.f_array[Reinforce.f_energy]))
                 fake_state = new_state.copy()
                 fake_state.energy = high_energy
@@ -486,6 +490,7 @@ class Reinforce:
                 print(f'High energy {fake_state.energy} ')
                 print(f'Penalty is {res} ')
                 return res
+        """
 
         # or penalty can be fixed by user
         if old_state.energy == new_state.energy:
@@ -1135,10 +1140,10 @@ class Reinforce:
         trajs_prob_dist = []
         
         # step 1: for each trajectory...
-        for _ in range(num_trajectories):
+        for _ in range(int(num_trajectories)):
             # step 2: get initial state
             traj = []
-            curr_state = self.states[0] 
+            curr_state = all_states[0]
             traj_prob = 1 # u(s0) = 1 as we start from here always
 
             # for h iterations...
@@ -1150,8 +1155,9 @@ class Reinforce:
                 weights = []
                 for action in self.actions:
                     weights.append(self.action_prob(action, state_h))
-                action_h = int(random.choices(self.actions, weights=weights, k=1))
-                traj_prob = traj_prob * weights[action_h]
+                action_h = random.choices(self.actions, weights=weights, k=1)[0]
+                action_h_index = self.actions.index(action_h)
+                traj_prob = traj_prob * weights[action_h_index]
 
                 # step 4: add [state_h, action_h] to trajectory
                 iter_h = [state_h, action_h]
@@ -1159,10 +1165,12 @@ class Reinforce:
 
                 # step 5: transition to next state
                 weights = []
+                state_indexes = [i for i in range(len(all_states))]
                 for state in all_states:
-                    weights.append(self.st_action_prob(action, state, theta=theta))
-                next_state = random.choices(all_states, weights=weights, k=1)[0]
-                traj_prob = traj_prob * weights[next_state]
+                    weights.append(self.action_prob(action, state))
+                next_state_index = int(random.choices(state_indexes, weights=weights, k=1)[0])
+                next_state = all_states[next_state_index]
+                traj_prob = traj_prob * weights[next_state_index]
                 curr_state = next_state
 
             # step 6: after completing the trajectory, add it to the list of trajectories
@@ -1197,7 +1205,7 @@ class Reinforce:
         return expectation
     
 
-    def Q_function(self, h, H):
+    def Q_function(self, h, H, states):
         """
         Q Function
         """
@@ -1205,8 +1213,8 @@ class Reinforce:
         # h ... H-1
         expectations = []
         for t in range(h, H):
-            old_state = self.states[t]
-            new_state = self.states[t+1]
+            old_state = states[t]
+            new_state = states[t+1]
             expectations.append(self.reward(old_state, new_state))
         # Average Expectation
         return np.mean(expectations)
@@ -1265,7 +1273,7 @@ class Reinforce:
         return np.mean(sampled_returns)
 
 
-    def A_function(self, h, H, state_h, action_h, N=10, baseline_type='value'):
+    def A_function(self, h, H, state_h, action_h, states, N=10, baseline_type='value'):
         """
         Advantage Function (And Psuedo-Advantage, in case of non Q-V)
         Computes the advantage function using a selected baseline.
@@ -1280,7 +1288,7 @@ class Reinforce:
             baseline = 0.7 * value_baseline + 0.3 * entropy_baseline
         else:
             raise ValueError(f"Unsupported baseline_type: {baseline_type}")
-        return self.Q_function(h, H) - baseline
+        return self.Q_function(h, H, states) - baseline
 
 
     def PPO(self, excluded_actions, lambd=0.05, gamma=0.01, N=10, baseline_type='value'):
@@ -1303,7 +1311,7 @@ class Reinforce:
             # E s(0), ..., s(H-1) ~ p_theta
             # in order to do this, we need to sample trajectories
             outer_expectation_result = []
-            trajs, trajs_prob_dist = self.p_trajectories(self, H, theta)
+            trajs, trajs_prob_dist = self.p_trajectories(H, theta)
             for traj in trajs:
                 states = [i[0] for i in traj]
 
@@ -1320,7 +1328,7 @@ class Reinforce:
                     allowed_actions = [a for a in FUSE_actions if a not in excluded_actions]
                     for action_h in allowed_actions:
                         # advantage function
-                        advantage = self.A_function(h, H, state_h, action_h, N=N, baseline_type=baseline_type)
+                        advantage = self.A_function(h, H, state_h, action_h, states, N=N, baseline_type=baseline_type)
                         inner_expectation_result.append(advantage)
                     sum_h_to_H += np.mean(inner_expectation_result)
 
@@ -1346,7 +1354,7 @@ class Reinforce:
         total_grads = []
 
         num_actions = len(FUSE_actions)
-        trajs, _ = self.p_trajectories(self, H, theta, num_trajectories=10)
+        trajs, _ = self.p_trajectories(H, theta, num_trajectories=10)
 
         N = len(trajs)
         for traj in range(N):
