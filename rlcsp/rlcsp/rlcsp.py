@@ -403,9 +403,10 @@ class Reinforce:
 
             diff = ''
 
-            # WHERE MY CHANGE IS (UNCOMMENT OUT """ PART AND COMMENT THIS LINE FOR RLCSP)
+            # TODO
+            # WHERE OUR MAIN CHANGE IS
+            # UNCOMMENT THE BIG BLOCK BELOW FOR RLCSP
             # self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
-
             self.theta = self.NPG(self, self.theta, self.excluded_actions, lambd=0.05, gamma=0.01)
 
             """
@@ -1345,131 +1346,119 @@ class Reinforce:
         best_theta = self.thetas[best_theta_index]
         return best_theta
     
-    
-    def sample(self, theta, FUSE_actions, H):
-        total_rewards = []
-        total_grads = []
 
-        num_actions = len(FUSE_actions)
-        trajs, _ = self.p_trajectories(self, H, theta, num_trajectories=10)
-
-        N = len(trajs)
-        for traj in range(N):
-            trajectory_reward = []
-            trajectory_grad = []
-        
-            for h in range(H):
-                action_h = traj[h][0]
-                state_h = traj[h][1]
-                pi_vec = []
-                for action in self.actions:
-                    pi_vec.append(self.action_prob(action, state_h))
-                grad = self.diff_action_prob_vector(action=action_h,state=state_h)/pi_vec
-                reward = self.reward(state_h, self.states[self.states.index(state_h) + 1])
-                trajectory_reward.append(reward)
-                trajectory_grad.append(grad)
-
-            total_rewards.append(trajectory_reward)
-            total_grads.append(trajectory_grad)
-
-        return total_grads, total_rewards
-    
-    
-    def compute_fisher_matrix(self, grads, lamb=1e-3):
-        N = len(grads)
-        second_sum = 0
-
-        for n in range(N):
-            first_sum = 0
-            first_average = 0
-            H = len(grads[n])
-
-            for h in range(H):
-                first_sum = first_sum + (grads[n][h] @ grads[n][h].T)
-
-            first_average = (1/H)*first_sum
-            second_sum = second_sum + first_average
-        second_average = (1/N)*second_sum
-
-        return second_average + lamb*np.eye(np.shape(second_average)[0])
-    
-
-    def compute_value_gradient(self, grads, rewards):
-        N = len(grads)
-        third_sum = 0
-
-        b = 0
-        for a in range(N):
-            b = b + sum(rewards[a])
-        b = b / N
-
-        for n in range(N):
-            second_sum = 0
-            first_average = 0
-            H = len(grads[n])
-
-            for h in range(H):
-                first_sum = 0
-
-                for t in range(h,H):
-                    first_sum = first_sum + rewards[n][t]
-                
-                baseline_diff = first_sum - b
-                second_sum = second_sum + (grads[n][h] * baseline_diff)
-
-            first_average = (1/H)*second_sum
-            third_sum = third_sum + first_average
-
-        second_average = (1/N)*third_sum
-        return second_average
-    
-
-    def compute_eta(self, delta, fisher, v_grad):
-        epsilon = 1e-6
-        return np.sqrt( delta / (( v_grad.T @ np.linalg.inv(fisher) ) @ v_grad + epsilon) )
-    
-    
-    def NPG(self, theta, excluded_actions, lambd=0.05, gamma=0.01):
-        # step 1: set up some variables and collect a trajectory
-        H               = len(self.episode)
-        FUSE_actions    = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-        states          = []
-
-        # populate H entries into 'states' array from self.episode
-        for old_state, _, _ in self.episode:
-            states.append(old_state)
+    def alpha_func_NPG(self, fisher, v_grad):
+        """
+        Returns dynamic learning rate
+        """
 
         delta = 1e-2
+        epsilon = 1e-6
 
-        total_grads, total_rewards = self.sample(theta, FUSE_actions, H)
-        fisher = self.compute_fisher_matrix(total_grads, lambd)
-        v_grad = self.compute_value_gradient(total_grads, total_rewards)
-        eta = self.compute_eta(delta, fisher, v_grad)
-        theta = theta + eta*(np.linalg.inv(fisher) @ v_grad)
+        t = np.sqrt( delta / (( v_grad.T @ np.linalg.inv(fisher) ) @ v_grad + epsilon) )
+        return t
+    
+    def end_episode_NPG(self):
+        """
+        Ends the current episode, calculates the reward, and updates the policy
+        """
 
-        # fisher = self.compute_fisher_matrix(, lambd)
-        # # v_grad = self.compute_value_gradient(total_grads, total_rewards)
+        reward = 0
 
-        # outer_v_grad = []
-        # outer_fisher = []
-        # trajs, _ = self.p_trajectories(self, H, theta, num_trajectories=10)
-        # for traj in trajs:
-        #     inner_v_grad = []
-        #     outer_fisher = []
-        #     for h in range(H):
-        #         state_h = traj[h][0]
-        #         action_h = traj[h][1]
-        #         pi = self.action_prob(action=action_h, state=state_h) # change to vector
-        #         diff_pi = self.diff_action_prob_vec(action=action_h, state=state_h)
-        #         b = np.mean()
-        #         inner_v_grad.append((diff_pi/pi)*(self.episodic_reward()-b)) # reformat to vector
-            
-        #     outer_v_grad.append(np.mean(inner_v_grad, axis=)) # reformat to vector
-        
-        # v_grad = np.mean(outer_v_grad, axis=) # reformat to vector
+        # update the policy for each step of episode
+        for step in range(len(self.episode)):
 
-        # eta = self.compute_eta(delta, fisher, v_grad)
+            old_state, new_state, action = self.episode[step]
 
-        # theta[i] = theta + eta*(np.linalg.inv(fisher) @ v_grad)
+            reward = self.episodic_reward(step, log=True)
+            # print(old_state)
+            # print(new_state)
+            # print(reward)
 
-        return theta
+            pi = self.action_prob(action=action, state=old_state)
+            if pi == 0:
+                print("policy is zero. do not update policy")
+                print("Action is %s, old energy is %f, new energy is %f" % (action,
+                                                                            old_state.energy,
+                                                                            new_state.energy))
+                return reward
+
+            pi_vec = [0 for k in self.actions]
+            for i in range(len(pi_vec)):
+                pi_vec[i] = self.action_prob(action=self.actions[i], state=old_state)
+
+            # foreseen problem here is difference in sizes between diff_pi and pi_vec
+            diff_pi = self.diff_action_prob_vector(action=action, state=old_state)
+            fisher = (diff_pi/pi_vec) @ (diff_pi/pi_vec).T
+            lamb = 1e-3
+            unreg_v_grad = diff_pi*reward
+            v_grad = unreg_v_grad + lamb*np.eye(np.shape(unreg_v_grad)[0])
+
+            self.load_params()
+
+            unscaled_reward = reward
+            if self.reg_params['scale_reward'] and self.std_reward is not None and self.mean_reward is not None:
+                reward = (unscaled_reward - self.mean_reward) / self.std_reward
+                print('Reward standardization: ' + str(unscaled_reward) + ' --> ' + str(reward))
+
+            if 'max_reward' in self.reg_params:
+                reward = min(reward, self.reg_params['max_reward'])
+            if 'min_reward' in self.reg_params:
+                reward = max(reward, self.reg_params['max_reward'])
+
+            if self.alpha != 0:
+                alpha = self.alpha_func_NPG(fisher, v_grad)
+            else:
+                alpha = self.alpha_func()
+
+            self.update_f_scaling(old_state, new_state, action, alpha)
+            self.step += 1
+
+            if self.debug:
+                print('Reward: ' + str(reward))
+
+            # on the first steps we force reward to be from -1 to +1
+            # because features can be standardized using mean and std of energy by too few samples
+            if self.step < 10:
+                reward = 1 if reward > 1 else reward
+                reward = -1 if reward < -1 else reward
+                print('Reward forced to -1+1: ' + str(reward))
+
+            if self.debug:
+                print('Alpha: ' + str(alpha))
+                print('Old theta: ' + str(self.theta))
+
+            diff = ''
+            for i in range(len(self.theta)):
+                diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
+                diff += str(diff_action_prob) + ', '
+
+                if diff_action_prob != 0:
+                    entr = self.diff_entropy(action=action, state=old_state, diff_var=i)
+
+                    if self.step > 10:
+                        if self.debug:
+                            print(f'Diff var is {i}')
+                            print(f'Whole update: alpha * (reward * diff_action_prob - beta * entr) / pi')
+                            print(f'Whole update: {alpha} * '
+                                  f'({reward} * {diff_action_prob} + {self.reg_params["beta"]} * {entr} ) / {pi}')
+
+                        # self.theta[i] += alpha * (reward * diff_action_prob + self.reg_params['beta'] * entr) / pi
+                        fisher = (diff_action_prob/pi) @ (diff_action_prob/pi).T
+                        v_grad = reward * diff_action_prob
+                        self.theta[i] += alpha * (np.linalg.inv(fisher) @ v_grad  + self.reg_params['beta'] * entr) / pi
+
+            if self.debug:
+                print('reward: ' + str(reward))
+                print('beta: ' + str(self.reg_params['beta']))
+                print('Diff: ' + diff)
+                print('Probability: ' + str(pi))
+                print('New theta: ' + str(self.theta))
+
+            # update theta param in DB
+            self.sql_execute(self.sql_update_theta(unscaled_reward=unscaled_reward, scaled_reward=reward))
+            self.thetas.append(self.theta.copy())
+
+        # refresh episode
+        self.episode = []
+        return reward
