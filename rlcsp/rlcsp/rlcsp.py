@@ -1245,13 +1245,16 @@ class Reinforce:
         """
         # Discount factor (set to 1.0 for no discounting, or adjust as needed)
         # Discount factor is used to place more weight on samples closer to the initial state
-        gamma = 0.9  
+        gamma = 1.0  
        
         # Use p_trajectories to sample N trajectories and their probabilities
         trajectories, _ = self.p_trajectories(H, self.theta, num_trajectories=N)
 
         # Filter trajectories that start from the given state
-        relevant_trajectories = [traj[h:] for traj in trajectories if traj[0][0] == state_h]
+        relevant_trajectories = [traj[h:] for traj in trajectories]
+        if relevant_trajectories == []:
+            print(f"Warning: No relevant trajectories found. Something is wrong with your logic")
+            return 0.0
 
         # Compute discounted cumulative rewards for each trajectory
         sampled_returns = []
@@ -1259,13 +1262,12 @@ class Reinforce:
             cumulative_reward = 0.0
             discount = 1.0
 
-            for step in traj:
-                state, action = step
-                # Start from the correct state, state_h
-                if state == state_h:  
-                    reward = self.reward(state, self.states[self.states.index(state) + 1])
-                    cumulative_reward += discount * reward
-                    discount *= gamma
+            states = [i[0] for i in traj]
+
+            for i, state in enumerate(states[:-1]):
+                reward = self.reward(state, states[i + 1])
+                cumulative_reward += discount * reward
+                discount *= gamma
 
             sampled_returns.append(cumulative_reward)
 
