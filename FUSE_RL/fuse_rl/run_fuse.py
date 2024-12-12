@@ -148,6 +148,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 	no_generations = 0
 	avg_moves = []
 	no_moves = 0
+	e_sequential = []
 
 	new_structure = None
 	gulp_time = 0
@@ -1382,6 +1383,10 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 							# TODO
 							## ---------  Avg # Of Generations To Lowest-Value --------- ##
+							if len(e_sequential) != 0 and e_sequential[-1] != min(generation_energies):
+								e_sequential.append(min(generation_energies))
+							elif len(e_sequential) == 0:
+								e_sequential.append(min(generation_energies))
 							e_output = min(generation_energies)
 							if e_output <= curr_val:
 								no_generations += 1
@@ -1393,6 +1398,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							print("\n[GENS]")
 							print("Curr No Gens:", no_generations)
 							print("Avg Gens:", avg_generations)
+							print("Gen Seq:", e_sequential)
 							print("\n[///////////////]")
 
 
