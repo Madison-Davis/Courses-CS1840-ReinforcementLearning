@@ -30,8 +30,8 @@ from .plot_results import plot_graph
 from .check_prev_structure import *
 from ase.build import sort
 from .run_multiple_calculators import run_calculators
-from rlcsp import Reinforce
-from rlcsp import State
+from rlcsp.rlcsp import Reinforce
+from rlcsp.rlcsp import State
 from shutil import copyfile
 
 #-------------------------------------------------------------------------------
@@ -140,12 +140,10 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 	 target_energy=0,
 	 write_graph_end=True
 	 ):
-	
-	print("HERETO")
 
 	# TODO
     ## ------------  NEW VARIABLES ------------ ##
-	lowest_val_compound = "1.25E+18" # for Y2O3, change this as needed
+	curr_val = 2 # use this to help determine avg_generation length
 	avg_generations = []
 	no_generations = 0
 	avg_moves = []
@@ -327,7 +325,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 	o.write("################################################################################")
 	o.write("\n#										 #")
-	o.write("\n#			   Flexible Unit Structure Engine			 #")
+	o.write("\n#			   Flexible Unit Structure Engine.C			 #")
 	o.write("\n#				     (FUSE +CSP)				 #")
 	o.write("\n#				     v1.04					 #")
 	o.write("\n#										 #")
@@ -419,35 +417,35 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 		except:
 			if system_type == 'ionic':
 				if invert_charge == False:
-					import fuse_rl.bond_table_ionic
+					import FUSE_RL.fuse_rl.bond_table_ionic
 					bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 					bondtable=bondtable['bond_table'].item()
 
 				if invert_charge == True:
-					import fuse_rl.bond_table_ionic_invert
+					import FUSE_RL.fuse_rl.bond_table_ionic_invert
 					bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 					bondtable=bondtable['bond_table'].item()
 
 
 			if system_type == 'neutral':
-				import fuse_rl.bond_table_atomic
+				import FUSE_RL.fuse_rl.bond_table_atomic
 				bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 				bondtable=bondtable['bond_table'].item()
 	if restart == False:
 		if system_type == 'ionic':
 			if invert_charge == False:
-				import fuse_rl.bond_table_ionic
+				import FUSE_RL.fuse_rl.bond_table_ionic
 				bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 				bondtable=bondtable['bond_table'].item()
 
 			if invert_charge == True:
-				import fuse_rl.bond_table_ionic_invert
+				import FUSE_RL.fuse_rl.bond_table_ionic_invert
 				bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 				bondtable=bondtable['bond_table'].item()
 
 
 		if system_type == 'neutral':
-			import fuse_rl.bond_table_atomic
+			import FUSE_RL.fuse_rl.bond_table_atomic
 			bondtable=numpy.load("bondtable.npz",allow_pickle=True)
 			bondtable=bondtable['bond_table'].item()
 
@@ -1371,8 +1369,8 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							## ---------  Avg # Of Moves Per Basin Hop Generation --------- ##
 							# sometimes there's literally just 0 moves, so forget these
 							# test to ensure it works/updates
-							print(avg_moves)
-							print(no_moves)
+							print("\nAvg Moves:", avg_moves)
+							print("\nCurr No Moves:", no_moves)
 							if no_moves != 0:
 								avg_moves.append(no_moves)
 							# reset to 0
@@ -1381,16 +1379,15 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 
 							# TODO
 							## ---------  Avg # Of Generations To Lowest-Value --------- ##
-							print(str(e_output))
-							print(avg_generations)
-							print(no_generations)
-							e_output = str("{0: .5e}").format(min(generation_energies))
-							if e_output == lowest_val_compound:
-								if no_generations != 0:
-									avg_generations.append(no_generations)
-								no_generations = 0
-							else:
+							print("\nAvg Gens:", avg_generations)
+							print("\nCurr No Gens:", no_generations)
+							e_output = min(generation_energies)
+							if e_output <= curr_val:
 								no_generations += 1
+							elif e_output > curr_val:
+								avg_generations.append(no_generations)
+								no_generations = 0
+							curr_val = e_output
 
 
 							if search == 1:
@@ -1429,7 +1426,7 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 							fuse_time += time.time() - start_t
 							start_t = time.time()
 							new_state = State(energy, unique=unique_energy)
-							reinforce.update(selected_move, old_state, new_state)
+							reinforce.update(selected_move, old_state, new_state, end_episode=True)
 							action_executed = True
 
 							reinforce_update_time += time.time() - start_t
@@ -1535,8 +1532,14 @@ def run_fuse(composition='',search='',initial_gen='',max_atoms='',vac_ratio=4,ap
 	o.write("\nAvg # Moves:")
 	o.write("\n" + str(numpy.mean(avg_moves)))
 
+	o.write("\n# Moves Array:")
+	o.write("\n" + avg_moves)
+
 	o.write("\nAvg # Generations To Lowest:")
 	o.write("\n" + str(numpy.mean(avg_generations)))
+
+	o.write("\n# Gens Array:")
+	o.write("\n" + avg_generations)
 
 
 	try:

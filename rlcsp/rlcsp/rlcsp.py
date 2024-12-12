@@ -324,13 +324,14 @@ class Reinforce:
             self.sql_execute(self.sql_update_reinforce(old_state, new_state, action, alpha))
 
     def update(self, action, old_state, new_state, end_episode=False):
-        print("HERE")
         """
         Observes new state and end episode if the corresponding parameter is True
         and episodes have not fixed length or if it's just time to end the episode.
         Updates the policy if the episode ends.
         """
-
+        # TODO
+        # added this one-liner to force it to update more
+        self.fixed_episodes = False
         # if the energy of the structure is valid add it to the episode
         if old_state.energy <= self.max_energy:
             if new_state.energy <= self.max_energy or self.non_converge_penalty != 0:
@@ -338,15 +339,17 @@ class Reinforce:
 
         # if the episode has the fixed length and achieves it, we end the episode
         # if the episode has the flexible length and we force to end it, end it
-        if (len(self.episode) >= self.episode_length and self.fixed_episodes) \
-                or (end_episode is True and not self.fixed_episodes):
+        if (len(self.episode) >= self.episode_length and self.fixed_episodes) or (end_episode is True and not self.fixed_episodes):
+            # TODO
+            # added this one-liner to force it to update more
+            self.fixed_episodes = True
             return self.end_episode()
 
     def end_episode(self):
         """
         Ends the current episode, calculates the reward, and updates the policy
         """
-
+        print("UPDATING")
         reward = 0
 
         # update the policy for each step of episode
@@ -404,11 +407,9 @@ class Reinforce:
             diff = ''
 
             # TODO
-            # WHERE OUR MAIN CHANGE IS
-            # UNCOMMENT THE BIG BLOCK BELOW FOR RLCSP
-            # self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
+            # WHERE OUR MAIN CHANGE IS; UNCOMMENT THE BIG BLOCK BELOW FOR RLCSP
+            #self.theta = self.PPO(self, self.excluded_actions, lambd=0.05, gamma=0.01)
             self.theta = self.NPG(self, self.theta, self.excluded_actions, lambd=0.05, gamma=0.01)
-
             """
             for i in range(len(self.theta)):
                 diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
@@ -1116,7 +1117,9 @@ class Reinforce:
     
     ## ------------  NEW FUNCTIONS ------------ ##
     # TODO
-
+    """
+    See all functions below.
+    """
 
     def p_trajectories(self, H, theta, num_trajectories=10):
         """
