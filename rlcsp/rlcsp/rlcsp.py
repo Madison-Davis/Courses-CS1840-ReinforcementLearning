@@ -406,7 +406,7 @@ class Reinforce:
             # comment the rest of this out if you're doing PPO or NPG
             print("Updating Theta...")
             #self.theta = self.NPG(self.theta, excluded_actions)
-            #self.theta = self.PPO(excluded_actions, baseline_type='combined')
+            self.theta = self.PPO(excluded_actions, baseline_type='entropy')
             """
             for i in range(len(self.theta)):
                 diff_action_prob = self.diff_action_prob(action=action, state=old_state, diff_var=i)
@@ -1212,7 +1212,7 @@ class Reinforce:
         # Summation
         # h ... H-1
         expectations = []
-        for t in range(h, H):
+        for t in range(h, H-1):
             old_state = states[t]
             new_state = states[t+1]
             expectations.append(self.reward(old_state, new_state))
@@ -1273,7 +1273,7 @@ class Reinforce:
         return np.mean(sampled_returns)
 
 
-    def A_function(self, h, H, state_h, action_h, states, N=10, baseline_type='value'):
+    def A_function(self, h, H, state_h, action_h, states, N=10, baseline_type='value', excluded_actions=[]):
         """
         Advantage Function (And Psuedo-Advantage, in case of non Q-V)
         Computes the advantage function using a selected baseline.
